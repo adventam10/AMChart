@@ -1,0 +1,472 @@
+//
+//  AMBarChartView.swift
+//  TestProject
+//
+//  Created by am10 on 2018/01/02.
+//  Copyright © 2018年 am10. All rights reserved.
+//
+
+import UIKit
+
+enum AMBCDecimalFormat {
+    case none // 小数なし
+    case first // 小数第一位まで
+    case second // 小数第二位まで
+}
+
+protocol AMBarChartViewDataSource:class {
+    
+    func numberOfSections(InBarChartView barChartView: AMBarChartView) -> Int
+    
+    func barChartView(barChartView: AMBarChartView, numberOfRowsInSection section: Int) -> Int
+    
+    func barChartView(barChartView: AMBarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
+    
+    func barChartView(barChartView: AMBarChartView, colorForRowAtIndexPath indexPath: IndexPath) -> UIColor
+    
+    func barChartView(barChartView: AMBarChartView, titleForXlabelInSection section: Int) -> String
+}
+
+class AMBarChartView: UIView {
+
+    override var bounds: CGRect {
+        
+        didSet {
+            
+            reloadData()
+        }
+    }
+    
+    /// 上下左右の余白
+    private let space:CGFloat = 10
+    
+    weak var dataSource:AMBarChartViewDataSource?
+    /// y軸の最大値
+    @IBInspectable var yAxisMaxValue:CGFloat = 1000
+    
+    /// y軸の最小値
+    @IBInspectable var yAxisMinValue:CGFloat = 0
+    
+    /// y軸ラベルの数
+    @IBInspectable var numberOfYAxisLabel:Int = 6
+    
+    /// y軸のタイトル
+    @IBInspectable var yAxisTitle:String = "" {
+        
+        didSet {
+            
+            yAxisTitleLabel.text = yAxisTitle
+        }
+    }
+    
+    /// x軸のタイトル
+    @IBInspectable var xAxisTitle:String = "" {
+        
+        didSet {
+            
+            xAxisTitleLabel.text = xAxisTitle
+        }
+    }
+    
+    /// y軸ラベルの幅
+    @IBInspectable var yLabelWidth:CGFloat = 50.0
+    
+    /// x軸ラベルの高さ
+    @IBInspectable var xLabelHeight:CGFloat = 30.0
+    
+    /// 軸の色
+    @IBInspectable var axisColor:UIColor = UIColor.black
+    
+    /// 軸の太さ
+    @IBInspectable var axisWidth:CGFloat = 1.0
+    
+    /// 棒グラフの間隔
+    @IBInspectable var barSpace:CGFloat = 10
+    
+    /// y軸のタイトルのフォント
+    @IBInspectable var yAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
+    
+    /// x軸のタイトルのフォント
+    @IBInspectable var xAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
+    
+    /// x軸のタイトルラベルの高さ
+    @IBInspectable var xAxisTitleLabelHeight:CGFloat = 50.0
+    
+    /// y軸のタイトルラベルの高さ
+    @IBInspectable var yAxisTitleLabelHeight:CGFloat = 50.0
+    
+    /// y軸ラベルのフォント
+    @IBInspectable var yLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
+    
+    /// x軸ラベルのフォント
+    @IBInspectable var xLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
+    
+    /// y軸のタイトルの文字色
+    @IBInspectable var yAxisTitleColor:UIColor = UIColor.black
+    
+    /// x軸のタイトルの文字色
+    @IBInspectable var xAxisTitleColor:UIColor = UIColor.black
+    
+    /// y軸ラベルの文字色
+    @IBInspectable var yLabelsTextColor:UIColor = UIColor.black
+    
+    /// x軸ラベルの文字色
+    @IBInspectable var xLabelsTextColor:UIColor = UIColor.black
+        
+    /// y軸の値の小数点以下の表記
+    var yAxisDecimalFormat:AMBCDecimalFormat = .none
+    
+    /// アニメーション時間
+    var animationDuration:CFTimeInterval = 0.6
+    
+    /// 横線表示フラグ
+    @IBInspectable var isHorizontalLine:Bool = false
+    
+    /// x軸
+    private let xAxisView = UIView()
+    
+    /// y軸
+    private let yAxisView = UIView()
+    
+    /// x軸ラベルリスト
+    private var xLabels = [UILabel]()
+    
+    /// y軸ラベルリスト
+    private var yLabels = [UILabel]()
+    
+    /// グラフレイヤーリスト
+    private var barLayers = [CALayer]()
+    
+    /// x軸のタイトルラベル
+    private let xAxisTitleLabel = UILabel()
+    
+    /// y軸のタイトルラベル
+    private let yAxisTitleLabel = UILabel()
+    
+    /// グラフの横線リスト
+    private var horizontalLineLayers = [CALayer]()
+    
+    /// グラフ同士の線リスト
+    private var graphLineLayers = [CAShapeLayer]()
+    
+    /// グラフ同士の線レイヤを置く用のレイヤ
+    private var graphLineLayer = CALayer()
+    
+    //MARK:Initialize
+    required init?(coder aDecoder: NSCoder) {
+        
+        super.init(coder:aDecoder)
+        initView()
+    }
+    
+    override init(frame: CGRect) {
+        
+        super.init(frame: frame)
+        backgroundColor = UIColor.clear
+        initView()
+    }
+    
+    convenience init() {
+        
+        self.init(frame: CGRect.zero)
+    }
+    
+    private func initView() {
+        
+        // y軸設定
+        addSubview(yAxisView)
+        yAxisTitleLabel.textAlignment = .right
+        yAxisTitleLabel.adjustsFontSizeToFitWidth = true
+        yAxisTitleLabel.numberOfLines = 0
+        addSubview(yAxisTitleLabel)
+        
+        // x軸設定
+        addSubview(xAxisView)
+        xAxisTitleLabel.textAlignment = .center
+        xAxisTitleLabel.adjustsFontSizeToFitWidth = true
+        xAxisTitleLabel.numberOfLines = 0
+        addSubview(xAxisTitleLabel)
+        
+        graphLineLayer.masksToBounds = true
+        layer.addSublayer(graphLineLayer)
+    }
+    
+    override func draw(_ rect: CGRect) {
+        
+        reloadData()
+    }
+    
+    func reloadData() {
+        
+        clearView()
+        settingAxisViewFrame()
+        settingAxisTitleLayout()
+        prepareYLabels()
+        
+        guard let dataSource = dataSource else {
+            
+            return
+        }
+        
+        let sections = dataSource.numberOfSections(InBarChartView: self)
+        
+        for section in 0..<sections {
+            
+            prepareXlabels(sections:sections, section:section)
+            prepareBarLayers(section:section)
+            
+            let label = xLabels[section]
+            label.text = dataSource.barChartView(barChartView: self, titleForXlabelInSection: section)
+            
+            let rows = dataSource.barChartView(barChartView: self, numberOfRowsInSection: section)
+            var values = [CGFloat]()
+            var colors = [UIColor]()
+            for row in 0..<rows {
+                
+                let indexPath = IndexPath(row:row, section: section)
+                let value = dataSource.barChartView(barChartView: self, valueForRowAtIndexPath: indexPath)
+                let color = dataSource.barChartView(barChartView: self, colorForRowAtIndexPath: indexPath)
+                values.append(value)
+                colors.append(color)
+            }
+            
+            prepareBarGraph(section: section, colors: colors, values: values)
+        }
+        
+        showAnimation()
+    }
+    
+    private func clearView() {
+        
+        xLabels.forEach {$0.removeFromSuperview()}
+        xLabels.removeAll()
+        
+        yLabels.forEach {$0.removeFromSuperview()}
+        yLabels.removeAll()
+        
+        horizontalLineLayers.forEach {$0.removeFromSuperlayer()}
+        horizontalLineLayers.removeAll()
+        
+        barLayers.forEach {$0.removeFromSuperlayer()}
+        barLayers.removeAll()
+        
+        graphLineLayers.forEach {$0.removeFromSuperlayer()}
+        graphLineLayers.removeAll()
+    }
+    
+    private func settingAxisViewFrame() {
+        
+        let a = (frame.height - space - yAxisTitleLabelHeight - space - xLabelHeight - xAxisTitleLabelHeight)
+        let b = CGFloat(numberOfYAxisLabel - 1)
+        var yLabelHeight = (a / b) * 0.6
+        if yLabelHeight.isNaN {
+            
+            yLabelHeight = 0
+        }
+        
+        // y軸設定
+        yAxisView.frame = CGRect(x: space + yLabelWidth,
+                                 y: space + yAxisTitleLabelHeight + yLabelHeight/2,
+                                 width: axisWidth,
+                                 height: frame.height - (space + yAxisTitleLabelHeight + yLabelHeight/2) - space - xLabelHeight - xAxisTitleLabelHeight)
+        
+        yAxisTitleLabel.frame = CGRect(x: space,
+                                       y: space,
+                                       width: yLabelWidth - space,
+                                       height: yAxisTitleLabelHeight)
+        
+        // x軸設定
+        xAxisView.frame = CGRect(x: yAxisView.frame.minX,
+                                 y: yAxisView.frame.maxY,
+                                 width: frame.width - yAxisView.frame.minX - space,
+                                 height: axisWidth)
+        
+        xAxisTitleLabel.frame = CGRect(x: xAxisView.frame.minX,
+                                        y: frame.height - xAxisTitleLabelHeight - space,
+                                        width: xAxisView.frame.width,
+                                        height: xAxisTitleLabelHeight)
+        
+        yAxisView.backgroundColor = axisColor
+        xAxisView.backgroundColor = axisColor
+        
+        graphLineLayer.frame = CGRect(x: yAxisView.frame.minX + axisWidth,
+                                      y: yAxisView.frame.minY,
+                                      width: xAxisView.frame.width - axisWidth,
+                                      height: yAxisView.frame.height)
+    }
+    
+    private func settingAxisTitleLayout() {
+        
+        yAxisTitleLabel.font = yAxisTitleFont
+        yAxisTitleLabel.textColor = yAxisTitleColor
+        
+        xAxisTitleLabel.font = xAxisTitleFont
+        xAxisTitleLabel.textColor = xAxisTitleColor
+    }
+    
+    private func prepareYLabels() {
+        
+        if numberOfYAxisLabel == 0 {
+            
+            return
+        }
+        
+        let valueCount = (yAxisMaxValue - yAxisMinValue) / CGFloat(numberOfYAxisLabel - 1)
+        var value = yAxisMinValue
+        let height = (yAxisView.frame.height / CGFloat(numberOfYAxisLabel - 1)) * 0.6
+        let space = (yAxisView.frame.height / CGFloat(numberOfYAxisLabel - 1)) * 0.4
+        var y = xAxisView.frame.minY - height/2
+        
+        for index in 0..<numberOfYAxisLabel {
+            
+            let yLabel = UILabel(frame:CGRect(x: space,
+                                              y: y,
+                                              width: yLabelWidth - space,
+                                              height: height))
+            yLabel.tag = index
+            yLabels.append(yLabel)
+            yLabel.textAlignment = .right
+            yLabel.adjustsFontSizeToFitWidth = true
+            yLabel.font = yLabelsFont
+            yLabel.textColor = yLabelsTextColor
+            addSubview(yLabel)
+            
+            if yAxisDecimalFormat == .none {
+                
+                yLabel.text = NSString(format: "%.0f", value) as String
+                
+            } else if yAxisDecimalFormat == .first {
+                
+                yLabel.text = NSString(format: "%.1f", value) as String
+                
+            } else if yAxisDecimalFormat == .second {
+                
+                yLabel.text = NSString(format: "%.2f", value) as String
+            }
+            
+            if isHorizontalLine {
+                
+                prepareGraphLineLayers(positionY:y + height/2)
+            }
+            y -= height + space
+            value += valueCount
+        }
+    }
+    
+    private func prepareGraphLineLayers(positionY :CGFloat) {
+        
+        let lineLayer = CALayer()
+        lineLayer.frame = CGRect(x: xAxisView.frame.minX,
+                                 y: positionY,
+                                 width: xAxisView.frame.width,
+                                 height: 1)
+        lineLayer.backgroundColor = UIColor.black.cgColor
+        layer.addSublayer(lineLayer)
+        horizontalLineLayers.append(lineLayer)
+    }
+    
+    private func prepareXlabels(sections: Int, section: Int) {
+        
+        if sections == 0 {
+            
+            return
+        }
+        
+        let width = (xAxisView.frame.width - axisWidth - barSpace) / CGFloat(sections) - barSpace
+        var x = xAxisView.frame.minX + axisWidth + (barSpace + width) * CGFloat(section)
+        x += barSpace
+        let y = xAxisView.frame.minY + axisWidth
+        let xLabel = UILabel(frame:CGRect(x: x,
+                                          y: y,
+                                          width: width,
+                                          height: xLabelHeight))
+        xLabel.textAlignment = .center
+        xLabel.adjustsFontSizeToFitWidth = true
+        xLabel.numberOfLines = 0
+        xLabel.font = xLabelsFont
+        xLabel.textColor = xLabelsTextColor
+        xLabel.tag = section
+        xLabels.append(xLabel)
+        addSubview(xLabel)
+    }
+    
+    private func prepareBarLayers(section: Int) {
+        
+        let xLabel = xLabels[section]
+        let barLayer = CALayer()
+        barLayer.frame = CGRect(x: xLabel.frame.minX,
+                                y: yAxisView.frame.minY,
+                                width: xLabel.frame.width,
+                                height: yAxisView.frame.height - axisWidth)
+        barLayers.append(barLayer)
+        layer.addSublayer(barLayer)
+    }
+    
+    private func prepareBarGraph(section: Int, colors: [UIColor], values: [CGFloat]) {
+        
+        let sum = values.reduce(0, +)
+        let barLayer = barLayers[section]
+        barLayer.masksToBounds = true
+        var frame = barLayer.frame
+        frame.size.height = ((sum - yAxisMinValue) / (yAxisMaxValue - yAxisMinValue)) * barLayer.frame.height
+        frame.origin.y = xAxisView.frame.minY - frame.height
+        barLayer.frame = frame
+        
+        var y = barLayer.frame.height + (barLayer.frame.height * yAxisMinValue) / (sum - yAxisMinValue)
+        if y.isNaN {
+            
+            y = 0
+        }
+        
+        for (index, color) in colors.enumerated() {
+            
+            let value = values[index]
+            var height = (value/(sum - yAxisMinValue)) * barLayer.frame.height
+            if height.isNaN {
+                
+                height = 0;
+            }
+            
+            let valueLayer = CAShapeLayer()
+            valueLayer.frame = barLayer.bounds
+            valueLayer.fillColor = color.cgColor
+            
+            let path = UIBezierPath()
+            path.move(to: CGPoint(x: 0, y: y - height))
+            path.addLine(to: CGPoint(x: 0, y: y))
+            path.addLine(to: CGPoint(x: barLayer.frame.width, y: y))
+            path.addLine(to: CGPoint(x: barLayer.frame.width, y: y - height))
+            path.addLine(to: CGPoint(x: 0, y: y - height))
+            valueLayer.path = path.cgPath;
+            
+            barLayer.addSublayer(valueLayer)
+            y -= height
+        }
+    }
+    
+    private func showAnimation (){
+                
+        for barLayer in barLayers {
+            
+            let startPath = UIBezierPath()
+            startPath.move(to: CGPoint(x: 0, y: barLayer.frame.height))
+            startPath.addLine(to: CGPoint(x: 0, y: barLayer.frame.height))
+            startPath.addLine(to: CGPoint(x: barLayer.frame.width, y: barLayer.frame.height))
+            startPath.addLine(to: CGPoint(x: barLayer.frame.width, y: barLayer.frame.height))
+            startPath.addLine(to: CGPoint(x: 0, y: barLayer.frame.height))
+            
+            for layer in barLayer.sublayers! {
+                
+                let valueLayer = layer as! CAShapeLayer
+                let animationPath = UIBezierPath(cgPath: valueLayer.path!)
+                let animation = CABasicAnimation(keyPath: "path")
+                animation.duration = animationDuration
+                animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+                animation.fromValue = startPath.cgPath
+                animation.toValue = animationPath.cgPath
+                valueLayer.path = animationPath.cgPath
+                valueLayer.add(animation, forKey: nil)
+            }
+        }
+    }
+}

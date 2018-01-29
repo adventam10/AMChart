@@ -1,6 +1,6 @@
 //
 //  AMPieChartView.swift
-//  TestProject
+//  AMChart, https://github.com/adventam10/AMChart
 //
 //  Created by am10 on 2018/01/02.
 //  Copyright © 2018年 am10. All rights reserved.
@@ -8,29 +8,27 @@
 
 import UIKit
 
-/// 上下左右の余白
 private let AMPCSpace:CGFloat = 10
 
-/// 未選択時のインデックス
 private let AMPCDeSelectIndex:Int = -1
 
-protocol AMPieChartViewDataSource:class {
+public protocol AMPieChartViewDataSource:class {
     
-    func numberOfSections(InPieChartView pieChartView: AMPieChartView) -> Int
+    func numberOfSections(inPieChartView pieChartView: AMPieChartView) -> Int
     
     func pieChartView(pieChartView:AMPieChartView, valueForSection section: Int) -> CGFloat
     
     func pieChartView(pieChartView:AMPieChartView, colorForSection section: Int) -> UIColor
 }
 
-protocol AMPieChartViewDelegate:class {
+public protocol AMPieChartViewDelegate:class {
     
     func pieChartView(pieChartView:AMPieChartView, didSelectSection section: Int)
     
     func pieChartView(pieChartView:AMPieChartView, didDeSelectSection section: Int)
 }
 
-class AMPieChartView: UIView {
+public class AMPieChartView: UIView {
 
     class FanLayer: CAShapeLayer {
         
@@ -131,7 +129,7 @@ class AMPieChartView: UIView {
         }
     }
     
-    override var bounds: CGRect {
+    override public var bounds: CGRect {
         
         didSet {
             
@@ -139,27 +137,21 @@ class AMPieChartView: UIView {
         }
     }
 
-    weak var dataSource:AMPieChartViewDataSource?
+    weak public var dataSource:AMPieChartViewDataSource?
     
-    weak var delegate:AMPieChartViewDelegate?
+    weak public var delegate:AMPieChartViewDelegate?
     
-    /// アニメーション時間
-    var animationDuration:CFTimeInterval = 0.6
+    public var animationDuration:CFTimeInterval = 0.6
     
-    /// 選択時のアニメーション時間
-    var selectedAnimationDuration:CFTimeInterval = 0.3
+    public var selectedAnimationDuration:CFTimeInterval = 0.3
     
-    /// 中央のくりぬきフラグ
-    @IBInspectable var isDounut:Bool = false
+    @IBInspectable public var isDounut:Bool = false
     
-    /// 中央ラベルのフォント
-    @IBInspectable var centerLabelFont:UIFont = UIFont.systemFont(ofSize: 15)
+    @IBInspectable public var centerLabelFont:UIFont = UIFont.systemFont(ofSize: 15)
+
+    @IBInspectable public var centerLabelTextColor:UIColor = UIColor.black
     
-    /// 中央ラベルの文字色
-    @IBInspectable var centerLabelTextColor:UIColor = UIColor.black
-    
-    /// 中央ラベルの文字
-    @IBInspectable var centerLabelText:String = "" {
+    @IBInspectable public var centerLabelText:String = "" {
         
         didSet {
             
@@ -167,8 +159,7 @@ class AMPieChartView: UIView {
         }
     }
     
-    /// 中央ラベルの文字
-    var centerLabelAttribetedText:NSAttributedString? = nil {
+    public var centerLabelAttribetedText:NSAttributedString? = nil {
         
         didSet {
             
@@ -176,36 +167,29 @@ class AMPieChartView: UIView {
         }
     }
     
-    /// 扇レイヤーリスト
     private var fanLayers = [FanLayer]()
     
-    /// 表示アニメーション用扇レイヤーリスト
     private var animationFanLayers = [FanLayer]()
     
-    /// アニメーション用の円グラフ角度リスト
     private var animationStartAngles = [Float]()
     private var animationEndAngles = [Float]()
     
-    /// グラフ表示用のView(ここに扇レイヤを置く)
     private let chartView = UIView()
     
-    /// 表示アニメーション用のグラフ表示用のView
     private let animationChartView = UIView()
     
-    /// 選択インデックス
     private var selectedIndex:Int = AMPCDeSelectIndex
     
-    /// 中央ラベル
     private let centerLabel = UILabel()
     
     //MARK:Initialize
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         
         super.init(coder:aDecoder)
         initView()
     }
     
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         
         super.init(frame: frame)
         backgroundColor = UIColor.clear
@@ -232,12 +216,12 @@ class AMPieChartView: UIView {
         addSubview(centerLabel)
     }
     
-    override func draw(_ rect: CGRect) {
+    override public func draw(_ rect: CGRect) {
         
         reloadData()
     }
     
-    func reloadData() {
+    public func reloadData() {
     
         selectedIndex = AMPCDeSelectIndex
         settingChartViewFrame()
@@ -246,7 +230,7 @@ class AMPieChartView: UIView {
             return
         }
         
-        let sections = dataSource.numberOfSections(InPieChartView: self)
+        let sections = dataSource.numberOfSections(inPieChartView: self)
         prepareFanLayer(sections: sections)
         var values = [CGFloat]()
         var colors = [UIColor]()
@@ -260,7 +244,7 @@ class AMPieChartView: UIView {
         showAnimation()
     }
     
-    func reDrawGraph() {
+    public func redrawChart() {
         
         fanLayers.forEach{$0.removeFromSuperlayer()}
         fanLayers.removeAll()
@@ -362,7 +346,6 @@ class AMPieChartView: UIView {
             }
             
             let fanLayer = fanLayers[index]
-            //ひとつめのアニメーション
             let animation1 = CABasicAnimation(keyPath: "startAngle")
             if fanLayer.path == nil {
                 
@@ -374,7 +357,6 @@ class AMPieChartView: UIView {
             }
             animation1.toValue = animationStartAngles[index]
             
-            //ふたつめのアニメーション
             let animation2 = CABasicAnimation(keyPath: "endAngle")
             if fanLayer.path == nil {
                 
@@ -386,7 +368,6 @@ class AMPieChartView: UIView {
             }
             animation2.toValue = animationEndAngles[index]
             
-            //アニメーショングループを作成
             let group = CAAnimationGroup()
             group.duration = animationDuration
             group.repeatCount = 1

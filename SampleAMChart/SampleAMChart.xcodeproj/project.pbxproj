@@ -7,31 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0E9A093B20038FA800DD65DB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9A093A20038FA800DD65DB /* AppDelegate.swift */; };
-		0E9A093D20038FA800DD65DB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9A093C20038FA800DD65DB /* ViewController.swift */; };
+		0E47538A201F73EC002EA382 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475388201F73EC002EA382 /* AppDelegate.swift */; };
+		0E47538B201F73EC002EA382 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475389201F73EC002EA382 /* ViewController.swift */; };
+		0E475392201F73FB002EA382 /* AMBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E47538D201F73FB002EA382 /* AMBarChartView.swift */; };
+		0E475393201F73FB002EA382 /* AMLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E47538E201F73FB002EA382 /* AMLineChartView.swift */; };
+		0E475394201F73FB002EA382 /* AMPieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E47538F201F73FB002EA382 /* AMPieChartView.swift */; };
+		0E475395201F73FB002EA382 /* AMRadarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475390201F73FB002EA382 /* AMRadarChartView.swift */; };
+		0E475396201F73FB002EA382 /* AMScatterChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E475391201F73FB002EA382 /* AMScatterChartView.swift */; };
 		0E9A094020038FA800DD65DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0E9A093E20038FA800DD65DB /* Main.storyboard */; };
 		0E9A094220038FA800DD65DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0E9A094120038FA800DD65DB /* Assets.xcassets */; };
 		0E9A094520038FA800DD65DB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0E9A094320038FA800DD65DB /* LaunchScreen.storyboard */; };
-		0E9A09522003902B00DD65DB /* AMBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9A094D2003902B00DD65DB /* AMBarChartView.swift */; };
-		0E9A09532003902B00DD65DB /* AMLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9A094E2003902B00DD65DB /* AMLineChartView.swift */; };
-		0E9A09542003902B00DD65DB /* AMPieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9A094F2003902B00DD65DB /* AMPieChartView.swift */; };
-		0E9A09552003902B00DD65DB /* AMRadarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9A09502003902B00DD65DB /* AMRadarChartView.swift */; };
-		0E9A09562003902B00DD65DB /* AMScatterChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9A09512003902B00DD65DB /* AMScatterChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E475388201F73EC002EA382 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0E475389201F73EC002EA382 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		0E47538D201F73FB002EA382 /* AMBarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMBarChartView.swift; sourceTree = "<group>"; };
+		0E47538E201F73FB002EA382 /* AMLineChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMLineChartView.swift; sourceTree = "<group>"; };
+		0E47538F201F73FB002EA382 /* AMPieChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPieChartView.swift; sourceTree = "<group>"; };
+		0E475390201F73FB002EA382 /* AMRadarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMRadarChartView.swift; sourceTree = "<group>"; };
+		0E475391201F73FB002EA382 /* AMScatterChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMScatterChartView.swift; sourceTree = "<group>"; };
 		0E9A093720038FA800DD65DB /* SampleAMChart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleAMChart.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0E9A093A20038FA800DD65DB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		0E9A093C20038FA800DD65DB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		0E9A093F20038FA800DD65DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0E9A094120038FA800DD65DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0E9A094420038FA800DD65DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0E9A094620038FA900DD65DB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0E9A094D2003902B00DD65DB /* AMBarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMBarChartView.swift; sourceTree = "<group>"; };
-		0E9A094E2003902B00DD65DB /* AMLineChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMLineChartView.swift; sourceTree = "<group>"; };
-		0E9A094F2003902B00DD65DB /* AMPieChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPieChartView.swift; sourceTree = "<group>"; };
-		0E9A09502003902B00DD65DB /* AMRadarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMRadarChartView.swift; sourceTree = "<group>"; };
-		0E9A09512003902B00DD65DB /* AMScatterChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMScatterChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +45,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E475387201F73EC002EA382 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				0E47538C201F73FB002EA382 /* AMChartView */,
+				0E475388201F73EC002EA382 /* AppDelegate.swift */,
+				0E475389201F73EC002EA382 /* ViewController.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		0E47538C201F73FB002EA382 /* AMChartView */ = {
+			isa = PBXGroup;
+			children = (
+				0E47538D201F73FB002EA382 /* AMBarChartView.swift */,
+				0E47538E201F73FB002EA382 /* AMLineChartView.swift */,
+				0E47538F201F73FB002EA382 /* AMPieChartView.swift */,
+				0E475390201F73FB002EA382 /* AMRadarChartView.swift */,
+				0E475391201F73FB002EA382 /* AMScatterChartView.swift */,
+			);
+			name = AMChartView;
+			path = ../../../AMChartView;
+			sourceTree = "<group>";
+		};
 		0E9A092E20038FA800DD65DB = {
 			isa = PBXGroup;
 			children = (
@@ -64,27 +87,13 @@
 		0E9A093920038FA800DD65DB /* SampleAMChart */ = {
 			isa = PBXGroup;
 			children = (
-				0E9A094C2003902B00DD65DB /* AMChart */,
-				0E9A093A20038FA800DD65DB /* AppDelegate.swift */,
-				0E9A093C20038FA800DD65DB /* ViewController.swift */,
+				0E475387201F73EC002EA382 /* Classes */,
 				0E9A093E20038FA800DD65DB /* Main.storyboard */,
 				0E9A094120038FA800DD65DB /* Assets.xcassets */,
 				0E9A094320038FA800DD65DB /* LaunchScreen.storyboard */,
 				0E9A094620038FA900DD65DB /* Info.plist */,
 			);
 			path = SampleAMChart;
-			sourceTree = "<group>";
-		};
-		0E9A094C2003902B00DD65DB /* AMChart */ = {
-			isa = PBXGroup;
-			children = (
-				0E9A094D2003902B00DD65DB /* AMBarChartView.swift */,
-				0E9A094E2003902B00DD65DB /* AMLineChartView.swift */,
-				0E9A094F2003902B00DD65DB /* AMPieChartView.swift */,
-				0E9A09502003902B00DD65DB /* AMRadarChartView.swift */,
-				0E9A09512003902B00DD65DB /* AMScatterChartView.swift */,
-			);
-			path = AMChart;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -119,7 +128,7 @@
 				TargetAttributes = {
 					0E9A093620038FA800DD65DB = {
 						CreatedOnToolsVersion = 9.2;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -159,13 +168,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0E9A09562003902B00DD65DB /* AMScatterChartView.swift in Sources */,
-				0E9A09552003902B00DD65DB /* AMRadarChartView.swift in Sources */,
-				0E9A093D20038FA800DD65DB /* ViewController.swift in Sources */,
-				0E9A09522003902B00DD65DB /* AMBarChartView.swift in Sources */,
-				0E9A09542003902B00DD65DB /* AMPieChartView.swift in Sources */,
-				0E9A093B20038FA800DD65DB /* AppDelegate.swift in Sources */,
-				0E9A09532003902B00DD65DB /* AMLineChartView.swift in Sources */,
+				0E475396201F73FB002EA382 /* AMScatterChartView.swift in Sources */,
+				0E475395201F73FB002EA382 /* AMRadarChartView.swift in Sources */,
+				0E47538B201F73EC002EA382 /* ViewController.swift in Sources */,
+				0E475392201F73FB002EA382 /* AMBarChartView.swift in Sources */,
+				0E475394201F73FB002EA382 /* AMPieChartView.swift in Sources */,
+				0E47538A201F73EC002EA382 /* AppDelegate.swift in Sources */,
+				0E475393201F73FB002EA382 /* AMLineChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +311,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SampleAMChart/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -318,7 +328,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Manual;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = SampleAMChart/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

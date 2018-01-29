@@ -1,6 +1,6 @@
 //
 //  AMRadarChartView.swift
-//  TestProject
+//  AMChart, https://github.com/adventam10/AMChart
 //
 //  Created by am10 on 2018/01/02.
 //  Copyright © 2018年 am10. All rights reserved.
@@ -8,13 +8,13 @@
 
 import UIKit
 
-enum AMRCDecimalFormat {
-    case none // 小数なし
-    case first // 小数第一位まで
-    case second // 小数第二位まで
+public enum AMRCDecimalFormat {
+    case none
+    case first
+    case second
 }
 
-protocol AMRadarChartViewDataSource: class {
+public protocol AMRadarChartViewDataSource: class {
     
     func numberOfSections(inRadarChartView radarChartView:AMRadarChartView) -> Int
     
@@ -38,9 +38,9 @@ extension AMRadarChartViewDataSource {
     }
 }
 
-class AMRadarChartView: UIView {
+public class AMRadarChartView: UIView {
 
-    override var bounds: CGRect {
+    override public var bounds: CGRect {
         
         didSet {
             
@@ -48,94 +48,68 @@ class AMRadarChartView: UIView {
         }
     }
     
-    weak var dataSource:AMRadarChartViewDataSource?
+    weak public var dataSource:AMRadarChartViewDataSource?
     
-    /// 上下左右の余白
+    @IBInspectable public var axisMaxValue:CGFloat = 5.0
+    
+    @IBInspectable public var axisMinValue:CGFloat = 0.0
+    
+    @IBInspectable public var numberOfAxisLabel:Int = 6
+    
+    @IBInspectable public var rowLabelWidth:CGFloat = 50.0
+    
+    @IBInspectable public var rowLabelHeight:CGFloat = 30.0
+    
+    @IBInspectable public var axisColor:UIColor = UIColor.black
+    
+    @IBInspectable public var axisWidth:CGFloat = 1.0
+    
+    @IBInspectable public var axisLabelsFont:UIFont = UIFont.systemFont(ofSize: 12)
+    
+    @IBInspectable public var axisLabelsWidth:CGFloat = 50.0
+    
+    @IBInspectable public var rowLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
+    
+    @IBInspectable public var axisLabelsTextColor:UIColor = UIColor.black
+    
+    @IBInspectable public var rowLabelsTextColor:UIColor = UIColor.black
+    
+    public var axisDecimalFormat : AMRCDecimalFormat = .none
+    
+    public var animationDuration:CFTimeInterval = 0.6
+    
+    @IBInspectable public var isDottedLine:Bool = false
+
     private let space:CGFloat = 10
     
-    /// グラフの枠線の幅
     private let borderLineWidth:CGFloat = 3.5
     
-    /// 軸の最大値
-    @IBInspectable var axisMaxValue:CGFloat = 5.0
-    
-    /// 軸の最小値
-    @IBInspectable var axisMinValue:CGFloat = 0.0
-    
-    /// 軸ラベルの数
-    @IBInspectable var numberOfAxisLabel:Int = 6
-    
-    /// 項目ラベルの幅
-    @IBInspectable var rowLabelWidth:CGFloat = 50.0
-    
-    /// 項目ラベルの高さ
-    @IBInspectable var rowLabelHeight:CGFloat = 30.0
-    
-    /// 軸の色
-    @IBInspectable var axisColor:UIColor = UIColor.black
-    
-    /// 軸の太さ
-    @IBInspectable var axisWidth:CGFloat = 1.0
-    
-    /// 軸ラベルのフォント
-    @IBInspectable var axisLabelsFont:UIFont = UIFont.systemFont(ofSize: 12)
-    
-    /// 軸ラベルの幅
-    @IBInspectable var axisLabelsWidth:CGFloat = 50.0
-    
-    /// 項目ラベルのフォント
-    @IBInspectable var rowLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    /// 軸ラベルの文字色
-    @IBInspectable var axisLabelsTextColor:UIColor = UIColor.black
-    
-    /// 項目ラベルの文字色
-    @IBInspectable var rowLabelsTextColor:UIColor = UIColor.black
-    
-    /// y軸の値の小数点以下の表記
-    var axisDecimalFormat : AMRCDecimalFormat = .none
-    
-    /// アニメーション時間
-    var animationDuration:CFTimeInterval = 0.6
-    
-    /// 点線フラグ
-    @IBInspectable var isDottedLine:Bool = false
-
-    /// チャートView(大元の正方形のViewここにレイヤなど置く)
     private let chartView = UIView()
     
-    /// 項目ラベルリスト
     private var rowLabels = [UILabel]()
     
-    /// 軸ラベルリスト
     private var axisLabels = [UILabel]()
     
-    /// グラフレイヤーリスト
     private var graphLayers = [CAShapeLayer]()
     
-    /// 軸など描画用のレイヤ
     private var radarChartLayer:CAShapeLayer?
     
-    /// 角度リスト
     private var angleList = [Float]()
     
-    /// アニメーション用の折れ線グラフパスリスト
     private var animationPaths = [UIBezierPath]()
     
-    /// 軸レイヤ置く用のView
     private let axisView = UIView()
     
-    /// グラフレイヤ置く用のView
     private let graphView = UIView()
     
     //MARK:Initialize
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         
         super.init(coder:aDecoder)
         initView()
     }
     
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         
         super.init(frame: frame)
         backgroundColor = UIColor.clear
@@ -154,7 +128,7 @@ class AMRadarChartView: UIView {
         chartView.addSubview(graphView)
     }
     
-    override func draw(_ rect: CGRect) {
+    override public func draw(_ rect: CGRect) {
         
         reloadData()
     }
@@ -171,7 +145,7 @@ class AMRadarChartView: UIView {
         graphView.frame = chartView.bounds
     }
     
-    func prepareRadarChartLayer(rows: Int) {
+    private func prepareRadarChartLayer(rows: Int) {
         
         radarChartLayer = CAShapeLayer()
         guard let radarChartLayer = radarChartLayer else {
@@ -195,7 +169,7 @@ class AMRadarChartView: UIView {
         let path = UIBezierPath()
         path.move(to: centerPoint)
         var angle:Float = Float(Double.pi/2 + Double.pi)
-        // 中心から外への線描画
+
         for _ in 0..<rows {
             
             let point = CGPoint(x: centerPoint.x + radius * CGFloat(cosf(angle)),
@@ -207,7 +181,6 @@ class AMRadarChartView: UIView {
             angle +=  Float(Double.pi*2) / Float(rows)
         }
         
-        // 枠線描画
         var drawRadius = radius
         for _ in 0..<numberOfAxisLabel {
             
@@ -416,7 +389,7 @@ class AMRadarChartView: UIView {
         animationPaths.removeAll()
     }
     
-    func reloadData() {
+    public func reloadData() {
         
         clearView()
         settingChartViewFrame()
@@ -467,7 +440,7 @@ class AMRadarChartView: UIView {
         showAnimation()
     }
     
-    func reDrawGraph() {
+    public func redrawChart() {
         
         graphLayers.forEach{$0.removeFromSuperlayer()}
         graphLayers.removeAll()

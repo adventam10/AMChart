@@ -1,6 +1,6 @@
 //
 //  AMLineChartView.swift
-//  TestProject
+//  AMChart, https://github.com/adventam10/AMChart
 //
 //  Created by am10 on 2018/01/02.
 //  Copyright © 2018年 am10. All rights reserved.
@@ -8,34 +8,34 @@
 
 import UIKit
 
-enum AMLCDecimalFormat {
-    case none // 小数なし
-    case first // 小数第一位まで
-    case second // 小数第二位まで
+public enum AMLCDecimalFormat {
+    case none
+    case first
+    case second
 }
 
-enum AMLCPointType {
-    /// 丸（塗りつぶしなし）
+public enum AMLCPointType {
+    /// circle（not filled）
     case type1
-    /// 丸（塗りつぶしあり）
+    /// circle（filled）
     case type2
-    /// 四角（塗りつぶしなし）
+    /// square（not filled）
     case type3
-    /// 四角（塗りつぶしあり）
+    /// square（filled）
     case type4
-    /// 三角（塗りつぶしなし）
+    /// triangle（not filled）
     case type5
-    /// 三角（塗りつぶしあり）
+    /// triangle（filled）
     case type6
-    /// ひし形（塗りつぶしなし）
+    /// diamond（not filled）
     case type7
-    /// ひし形（塗りつぶしあり）
+    /// diamond（filled）
     case type8
-    /// ×印
+    /// x mark
     case type9
 }
 
-protocol AMLineChartViewDataSource:class {
+public protocol AMLineChartViewDataSource:class {
     
     func numberOfSections(inLineChartView lineChartView:AMLineChartView) -> Int
     
@@ -51,9 +51,9 @@ protocol AMLineChartViewDataSource:class {
 }
 
 
-class AMLineChartView: UIView {
+public class AMLineChartView: UIView {
 
-    override var bounds: CGRect {
+    override public var bounds: CGRect {
         
         didSet {
             
@@ -61,25 +61,19 @@ class AMLineChartView: UIView {
         }
     }
     
-    /// 上下左右の余白
     private let space:CGFloat = 10
 
-    /// 点の半径
     private let pointRadius:CGFloat = 5
     
-    weak var dataSource : AMLineChartViewDataSource?
+    weak public var dataSource : AMLineChartViewDataSource?
     
-    /// y軸の最大値
-    @IBInspectable var yAxisMaxValue:CGFloat = 1000
+    @IBInspectable public var yAxisMaxValue:CGFloat = 1000
     
-    /// y軸の最小値
-    @IBInspectable var yAxisMinValue:CGFloat = 0
+    @IBInspectable public var yAxisMinValue:CGFloat = 0
     
-    /// y軸ラベルの数
-    @IBInspectable var numberOfYAxisLabel:Int = 6
+    @IBInspectable public var numberOfYAxisLabel:Int = 6
     
-    /// y軸のタイトル
-    @IBInspectable var yAxisTitle:String = "" {
+    @IBInspectable public var yAxisTitle:String = "" {
         
         didSet {
             
@@ -87,8 +81,7 @@ class AMLineChartView: UIView {
         }
     }
     
-    /// x軸のタイトル
-    @IBInspectable var xAxisTitle:String = "" {
+    @IBInspectable public var xAxisTitle:String = "" {
         
         didSet {
             
@@ -96,92 +89,66 @@ class AMLineChartView: UIView {
         }
     }
     
-    /// y軸ラベルの幅
-    @IBInspectable var yLabelWidth:CGFloat = 50.0
+    @IBInspectable public var yLabelWidth:CGFloat = 50.0
     
-    /// x軸ラベルの高さ
-    @IBInspectable var xLabelHeight:CGFloat = 30.0
+    @IBInspectable public var xLabelHeight:CGFloat = 30.0
     
-    /// 軸の色
-    @IBInspectable var axisColor:UIColor = UIColor.black
+    @IBInspectable public var axisColor:UIColor = UIColor.black
     
-    /// 軸の太さ
-    @IBInspectable var axisWidth:CGFloat = 1.0
+    @IBInspectable public var axisWidth:CGFloat = 1.0
     
-    /// y軸のタイトルのフォント
-    @IBInspectable var yAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
+    @IBInspectable public var yAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
     
-    /// x軸のタイトルのフォント
-    @IBInspectable var xAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
+    @IBInspectable public var xAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
     
-    /// x軸のタイトルラベルの高さ
-    @IBInspectable var xAxisTitleLabelHeight:CGFloat = 50.0
+    @IBInspectable public var xAxisTitleLabelHeight:CGFloat = 50.0
     
-    /// y軸のタイトルラベルの高さ
-    @IBInspectable var yAxisTitleLabelHeight:CGFloat = 50.0
+    @IBInspectable public var yAxisTitleLabelHeight:CGFloat = 50.0
     
-    /// y軸ラベルのフォント
-    @IBInspectable var yLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
+    @IBInspectable public var yLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
     
-    /// x軸ラベルのフォント
-    @IBInspectable var xLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
+    @IBInspectable public var xLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
     
-    /// y軸のタイトルの文字色
-    @IBInspectable var yAxisTitleColor:UIColor = UIColor.black
+    @IBInspectable public var yAxisTitleColor:UIColor = UIColor.black
     
-    /// x軸のタイトルの文字色
-    @IBInspectable var xAxisTitleColor:UIColor = UIColor.black
+    @IBInspectable public var xAxisTitleColor:UIColor = UIColor.black
     
-    /// y軸ラベルの文字色
-    @IBInspectable var yLabelsTextColor:UIColor = UIColor.black
+    @IBInspectable public var yLabelsTextColor:UIColor = UIColor.black
     
-    /// x軸ラベルの文字色
-    @IBInspectable var xLabelsTextColor:UIColor = UIColor.black
+    @IBInspectable public var xLabelsTextColor:UIColor = UIColor.black
     
-    /// y軸の値の小数点以下の表記
-    var yAxisDecimalFormat:AMLCDecimalFormat = .none
+    public var yAxisDecimalFormat:AMLCDecimalFormat = .none
     
-    /// アニメーション時間
-    var animationDuration:CFTimeInterval = 0.6
+    public var animationDuration:CFTimeInterval = 0.6
     
-    /// 横線フラグ
-    @IBInspectable var isHorizontalLine:Bool = false
+    @IBInspectable public var isHorizontalLine:Bool = false
     
-    /// x軸
     private let xAxisView = UIView()
-    
-    /// y軸
+
     private let yAxisView = UIView()
     
-    /// x軸ラベルリスト
     private var xLabels = [UILabel]()
     
-    /// y軸ラベルリスト
     private var yLabels = [UILabel]()
     
-    /// グラフレイヤーリスト
     private var graphLayers = [CAShapeLayer]()
-    
-    /// x軸のタイトルラベル
+
     private let xAxisTitleLabel = UILabel()
-    
-    /// y軸のタイトルラベル
+
     private let yAxisTitleLabel = UILabel()
     
-    /// グラフの横線リスト
     private var horizontalLineLayers = [CALayer]()
     
-    /// アニメーション用の折れ線グラフパスリスト
     private var animationPaths = [UIBezierPath]()
     
     //MARK:Initialize
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         
         super.init(coder:aDecoder)
         initView()
     }
     
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         
         super.init(frame: frame)
         backgroundColor = UIColor.clear
@@ -210,12 +177,12 @@ class AMLineChartView: UIView {
         addSubview(xAxisTitleLabel)
     }
     
-    override func draw(_ rect: CGRect) {
+    override public func draw(_ rect: CGRect) {
         
         reloadData()
     }
     
-    func reloadData() {
+    public func reloadData() {
         
         clearView()
         settingAxisViewFrame()
@@ -261,7 +228,7 @@ class AMLineChartView: UIView {
         showAnimation()
     }
     
-    func reDrawGraph() {
+    func redrawChart() {
         
         graphLayers.forEach{$0.removeFromSuperlayer()}
         graphLayers.removeAll()

@@ -61,9 +61,9 @@ class ViewController: UIViewController, AMRadarChartViewDataSource, AMScatterCha
     
     @IBAction private func tappedRedrawButton(_ sender: Any) {
         
-        radarChartView.reDrawGraph()
-        lineChartView.reDrawGraph()
-        pieChartView.reDrawGraph()
+        radarChartView.redrawChart()
+        lineChartView.redrawChart()
+        pieChartView.redrawChart()
         barChartView.reloadData()
         scatterChartView.reloadData()
     }
@@ -245,7 +245,7 @@ class ViewController: UIViewController, AMRadarChartViewDataSource, AMScatterCha
         return scatterPointTypes[Int(arc4random_uniform(9))]
     }
     
-    func numberOfSections(InPieChartView pieChartView: AMPieChartView) -> Int {
+    func numberOfSections(inPieChartView pieChartView: AMPieChartView) -> Int {
         
         return pieDataList.count
     }
@@ -263,7 +263,7 @@ class ViewController: UIViewController, AMRadarChartViewDataSource, AMScatterCha
         return UIColor(red: r, green: g, blue: b, alpha: 1.0)
     }
     
-    func numberOfSections(InBarChartView barChartView: AMBarChartView) -> Int {
+    func numberOfSections(inBarChartView barChartView: AMBarChartView) -> Int {
         
         return barDataList.count
     }

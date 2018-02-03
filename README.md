@@ -12,6 +12,13 @@
 
 ## Installation
 
+### CocoaPods
+
+Add this to your Podfile.
+```ogdl
+pod 'AMMChart'
+```
+
 ### Carthage
 
 Add this to your Cartfile.

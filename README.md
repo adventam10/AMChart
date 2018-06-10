@@ -16,7 +16,7 @@
 
 Add this to your Podfile.
 ```ogdl
-pod 'AMMChart'
+pod 'AMChart'
 ```
 
 ### Carthage

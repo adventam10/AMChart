@@ -27,22 +27,16 @@ public class AMPieChartView: UIView {
 
     class FanLayer: CAShapeLayer {
         
-        /// インデックス
         var index:Int = 0
         
-        /// 開始角度
         @objc var startAngle:Float = 0
         
-        /// 終了角度
         @objc var endAngle:Float = 0
         
-        /// 値
         var value:CGFloat = 0
         
-        /// 値の比率（値/全体の合計）
         var rate:CGFloat = 0
         
-        /// 中央のくりぬきフラグ
         var isDounut = false
         
         override class func needsDisplay(forKey key: String) -> Bool {

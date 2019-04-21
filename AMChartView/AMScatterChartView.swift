@@ -161,14 +161,14 @@ public class AMScatterChartView: UIView {
     }
     
     private func initView() {
-        // y軸設定
+        // Set Y axis
         addSubview(yAxisView)
         yAxisTitleLabel.textAlignment = .right
         yAxisTitleLabel.adjustsFontSizeToFitWidth = true
         yAxisTitleLabel.numberOfLines = 0
         addSubview(yAxisTitleLabel)
         
-        // x軸設定
+        // Set X axis
         addSubview(xAxisView)
         xAxisTitleLabel.textAlignment = .center
         xAxisTitleLabel.adjustsFontSizeToFitWidth = true

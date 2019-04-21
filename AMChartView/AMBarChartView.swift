@@ -124,14 +124,14 @@ public class AMBarChartView: UIView {
     }
     
     private func initView() {
-        // y軸設定
+        // Set Y axis
         addSubview(yAxisView)
         yAxisTitleLabel.textAlignment = .right
         yAxisTitleLabel.adjustsFontSizeToFitWidth = true
         yAxisTitleLabel.numberOfLines = 0
         addSubview(yAxisTitleLabel)
         
-        // x軸設定
+        // Set X axis
         addSubview(xAxisView)
         xAxisTitleLabel.textAlignment = .center
         xAxisTitleLabel.adjustsFontSizeToFitWidth = true
@@ -207,7 +207,7 @@ public class AMBarChartView: UIView {
             yLabelHeight = 0
         }
         
-        // y軸設定
+        // Set Y axis
         yAxisView.frame = CGRect(x: space + yLabelWidth,
                                  y: space + yAxisTitleLabelHeight + yLabelHeight/2,
                                  width: axisWidth,
@@ -218,7 +218,7 @@ public class AMBarChartView: UIView {
                                        width: yLabelWidth - space,
                                        height: yAxisTitleLabelHeight)
         
-        // x軸設定
+        // Set X axis
         xAxisView.frame = CGRect(x: yAxisView.frame.minX,
                                  y: yAxisView.frame.maxY,
                                  width: frame.width - yAxisView.frame.minX - space,

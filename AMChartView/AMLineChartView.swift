@@ -145,14 +145,14 @@ public class AMLineChartView: UIView {
     }
     
     private func initView() {
-        // y軸設定
+        // Set Y axis
         addSubview(yAxisView)
         yAxisTitleLabel.textAlignment = .right
         yAxisTitleLabel.adjustsFontSizeToFitWidth = true
         yAxisTitleLabel.numberOfLines = 0
         addSubview(yAxisTitleLabel)
         
-        // x軸設定
+        // Set X axis
         addSubview(xAxisView)
         xAxisTitleLabel.textAlignment = .center
         xAxisTitleLabel.adjustsFontSizeToFitWidth = true
@@ -228,7 +228,7 @@ public class AMLineChartView: UIView {
         if yLabelHeight.isNaN {
             yLabelHeight = 0
         }
-        // y軸設定
+        // Set Y axis
         yAxisView.frame = CGRect(x: space + yLabelWidth,
                                   y: space + yAxisTitleLabelHeight  + yLabelHeight/2,
                                   width: axisWidth,
@@ -239,7 +239,7 @@ public class AMLineChartView: UIView {
                                        width: yLabelWidth - space,
                                        height: yAxisTitleLabelHeight)
         
-        // x軸設定
+        // Set X axis
         xAxisView.frame = CGRect(x: yAxisView.frame.origin.x,
                                   y: yAxisView.frame.height + yAxisView.frame.origin.y,
                                   width: frame.width - yAxisView.frame.origin.x - space,

@@ -15,25 +15,17 @@ public enum AMRCDecimalFormat {
 }
 
 public protocol AMRadarChartViewDataSource: class {
-    
     func numberOfSections(inRadarChartView radarChartView:AMRadarChartView) -> Int
-    
     func numberOfRows(inRadarChartView radarChartView:AMRadarChartView) -> Int
-    
     func radarChartView(radarChartView:AMRadarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
-    
     func radarChartView(radarChartView:AMRadarChartView, fillColorForSection section: Int) -> UIColor
-    
     func radarChartView(radarChartView:AMRadarChartView, strokeColorForSection section: Int) -> UIColor
-    
     func radarChartView(radarChartView:AMRadarChartView, titleForXlabelInRow row: Int) -> String
 }
 
 extension AMRadarChartViewDataSource {
-    
     func radarChartView(radarChartView:AMRadarChartView,
                         titleForXlabelInRow row: Int) -> String {
-        
         return ""
     }
 }
@@ -41,9 +33,7 @@ extension AMRadarChartViewDataSource {
 public class AMRadarChartView: UIView {
 
     override public var bounds: CGRect {
-        
         didSet {
-            
             reloadData()
         }
     }
@@ -104,37 +94,31 @@ public class AMRadarChartView: UIView {
     
     //MARK:Initialize
     required public init?(coder aDecoder: NSCoder) {
-        
         super.init(coder:aDecoder)
         initView()
     }
     
     override public init(frame: CGRect) {
-        
         super.init(frame: frame)
         backgroundColor = UIColor.clear
         initView()
     }
     
     convenience init() {
-        
         self.init(frame: CGRect.zero)
     }
     
     private func initView() {
-        
         addSubview(chartView)
         chartView.addSubview(axisView)
         chartView.addSubview(graphView)
     }
     
     override public func draw(_ rect: CGRect) {
-        
         reloadData()
     }
     
     private func settingChartViewFrame() {
-        
         let length = (frame.height < frame.width) ? frame.height : frame.width
         
         chartView.frame = CGRect(x: frame.width/2 - length/2,
@@ -146,10 +130,8 @@ public class AMRadarChartView: UIView {
     }
     
     private func prepareRadarChartLayer(rows: Int) {
-        
         radarChartLayer = CAShapeLayer()
         guard let radarChartLayer = radarChartLayer else {
-            
             return
         }
         
@@ -171,7 +153,6 @@ public class AMRadarChartView: UIView {
         var angle:Float = Float(Double.pi/2 + Double.pi)
 
         for _ in 0..<rows {
-            
             let point = CGPoint(x: centerPoint.x + radius * CGFloat(cosf(angle)),
                                 y: centerPoint.y + radius * CGFloat(sinf(angle)))
             
@@ -183,20 +164,15 @@ public class AMRadarChartView: UIView {
         
         var drawRadius = radius
         for _ in 0..<numberOfAxisLabel {
-            
             var startPoint = CGPoint.zero
             var angle:Float = Float(Double.pi/2 + Double.pi)
             for row in 0..<rows {
-                
                 let point = CGPoint(x: centerPoint.x + drawRadius * CGFloat(cosf(angle)),
                                     y: centerPoint.y + drawRadius * CGFloat(sinf(angle)))
                 if row == 0 {
-                    
                     path.move(to: point)
                     startPoint = point
-                    
                 } else {
-                    
                     path.addLine(to: point)
                 }
                 
@@ -211,28 +187,23 @@ public class AMRadarChartView: UIView {
     }
     
     private func prepareGraphLayers(sections: Int) {
-        
         while graphLayers.count < sections {
-            
             let graphLayer = CAShapeLayer()
             graphView.layer.addSublayer(graphLayer)
             graphLayers.append(graphLayer)
         }
         
         while graphLayers.count > sections {
-            
             let graphLayer = graphLayers.last
             graphLayer?.removeFromSuperlayer()
             graphLayers.removeLast()
         }
         
         guard let radarChartLayer = radarChartLayer else {
-            
             return
         }
         
         for graphLayer in graphLayers {
-            
             graphLayer.frame = radarChartLayer.frame
             graphLayer.lineWidth = borderLineWidth
             graphLayer.lineJoin = CAShapeLayerLineJoin.round
@@ -242,9 +213,7 @@ public class AMRadarChartView: UIView {
     }
     
     private func prepareRowLabels() {
-        
         guard let radarChartLayer = radarChartLayer else {
-            
             return
         }
         
@@ -253,7 +222,6 @@ public class AMRadarChartView: UIView {
                                   y: radarChartLayer.frame.origin.y + radius)
         
         for angle in angleList {
-            
             let label = UILabel(frame:CGRect(x: 0,
                                              y: 0,
                                              width: rowLabelWidth,
@@ -271,9 +239,7 @@ public class AMRadarChartView: UIView {
     }
     
     private func prepareAxisLabels() {
-        
         guard let radarChartLayer = radarChartLayer else {
-            
             return
         }
         
@@ -288,7 +254,6 @@ public class AMRadarChartView: UIView {
         var value = axisMaxValue
         
         for _ in 0..<numberOfAxisLabel {
-            
             let point = CGPoint(x: centerPoint.x + drawRadius * CGFloat(cosf(angle)),
                                 y: centerPoint.y + drawRadius * CGFloat(sinf(angle)))
             
@@ -303,20 +268,16 @@ public class AMRadarChartView: UIView {
             label.textColor = axisLabelsTextColor
             
             var text = ""
-            if axisDecimalFormat == .none {
-                
+            switch axisDecimalFormat {
+            case .none:
                 text = NSString(format: "%.0f", value) as String
-                
-            } else if axisDecimalFormat == .first {
-                
+            case .first:
                 text = NSString(format: "%.1f", value) as String
-                
-            } else if axisDecimalFormat == .second {
-                
+            case .second:
                 text = NSString(format: "%.2f", value) as String
             }
             
-            label.text = text;
+            label.text = text
             axisLabels.append(label)
             chartView.addSubview(label)
             drawRadius -= radius/CGFloat(numberOfAxisLabel - 1)
@@ -329,9 +290,7 @@ public class AMRadarChartView: UIView {
                                     fillColor: UIColor,
                                     strokeColor: UIColor,
                                     values: [CGFloat]) {
-        
         guard let radarChartLayer = radarChartLayer else {
-            
             return
         }
         
@@ -344,22 +303,18 @@ public class AMRadarChartView: UIView {
         let centerPoint = CGPoint(x: radius, y: radius)
         let path = UIBezierPath()
         let startPath = UIBezierPath()
-        var startPoint = CGPoint.zero;
+        var startPoint = CGPoint.zero
         
         for row in 0..<rows {
-            
             let angle = angleList[row]
             let rate = values[row] / (axisMaxValue - axisMinValue)
             let point = CGPoint(x: centerPoint.x + (radius * rate) * CGFloat(cosf(angle)),
                                 y: centerPoint.y + (radius * rate) * CGFloat(sinf(angle)))
             if row == 0 {
-                
                 path.move(to: point)
                 startPath.move(to: centerPoint)
                 startPoint = point
-                
             } else {
-                
                 path.addLine(to: point)
                 startPath.addLine(to: centerPoint)
             }
@@ -368,33 +323,28 @@ public class AMRadarChartView: UIView {
         startPath.move(to: centerPoint)
         
         if (layer.path == nil) {
-            
             layer.path = startPath.cgPath
         }
         animationPaths.append(path)
     }
     
     private func showAnimation() {
-        
         for (index, graphLayer) in graphLayers.enumerated() {
-            
             let animation = CABasicAnimation(keyPath: "path")
-            animation.duration = animationDuration;
+            animation.duration = animationDuration
             animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
             animation.fromValue = UIBezierPath(cgPath: graphLayer.path!).cgPath
             animation.toValue = animationPaths[index].cgPath
-            graphLayer.path = animationPaths[index].cgPath;
+            graphLayer.path = animationPaths[index].cgPath
             graphLayer.add(animation, forKey: nil)
         }
         animationPaths.removeAll()
     }
     
     public func reloadData() {
-        
         clearView()
         settingChartViewFrame()
         guard let dataSource = dataSource else {
-            
             return
         }
         
@@ -402,7 +352,6 @@ public class AMRadarChartView: UIView {
         let rows = dataSource.numberOfRows(inRadarChartView: self)
         
         if (rows < 3) {
-            
             return
         }
         
@@ -412,12 +361,9 @@ public class AMRadarChartView: UIView {
         prepareAxisLabels()
         
         for section in 0..<sections {
-            
             var values = [CGFloat]()
             for row in 0..<rows {
-                
                 if section == 0 {
-                    
                     let label = rowLabels[row]
                     label.text = dataSource.radarChartView(radarChartView: self,
                                                            titleForXlabelInRow: row)
@@ -441,14 +387,12 @@ public class AMRadarChartView: UIView {
     }
     
     public func redrawChart() {
-        
         graphLayers.forEach{$0.removeFromSuperlayer()}
         graphLayers.removeAll()
         reloadData()
     }
     
     private func clearView() {
-        
         axisLabels.forEach{$0.removeFromSuperview()}
         axisLabels.removeAll()
         

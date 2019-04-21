@@ -47,24 +47,17 @@ public struct AMSCScatterValue {
 }
 
 public protocol AMScatterChartViewDataSource:class {
-    
     func numberOfSections(inScatterChartView scatterChartView:AMScatterChartView) -> Int
-
     func scatterChartView(scatterChartView:AMScatterChartView, numberOfRowsInSection section: Int) -> Int
-    
     func scatterChartView(scatterChartView:AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMSCScatterValue
-    
     func scatterChartView(scatterChartView:AMScatterChartView, colorForSection section: Int) -> UIColor
-
     func scatterChartView(scatterChartView:AMScatterChartView, pointTypeForSection section: Int) -> AMSCPointType
 }
 
 public class AMScatterChartView: UIView {
 
     override public var bounds: CGRect {
-        
         didSet {
-            
             reloadData()
         }
     }
@@ -82,9 +75,7 @@ public class AMScatterChartView: UIView {
     @IBInspectable public var numberOfYAxisLabel:Int = 6
     
     @IBInspectable public var yAxisTitle:String = "" {
-        
         didSet {
-            
             yAxisTitleLabel.text = yAxisTitle
         }
     }
@@ -96,9 +87,7 @@ public class AMScatterChartView: UIView {
     @IBInspectable public var numberOfXAxisLabel:Int = 6
     
     @IBInspectable public var xAxisTitle:String = "" {
-        
         didSet {
-            
             xAxisTitleLabel.text = xAxisTitle
         }
     }
@@ -157,25 +146,21 @@ public class AMScatterChartView: UIView {
     
     //MARK:Initialize
     required public init?(coder aDecoder: NSCoder) {
-        
         super.init(coder:aDecoder)
         initView()
     }
     
     override public init(frame: CGRect) {
-        
         super.init(frame: frame)
         backgroundColor = UIColor.clear
         initView()
     }
     
     convenience init() {
-        
         self.init(frame: CGRect.zero)
     }
     
     private func initView() {
-        
         // y軸設定
         addSubview(yAxisView)
         yAxisTitleLabel.textAlignment = .right
@@ -194,12 +179,10 @@ public class AMScatterChartView: UIView {
     }
     
     override public func draw(_ rect: CGRect) {
-        
         reloadData()
     }
     
     public func reloadData() {
-        
         clearView()
         settingAxisViewFrame()
         settingAxisTitleLayout()
@@ -207,7 +190,6 @@ public class AMScatterChartView: UIView {
         prepareXLabels()
         
         guard let dataSource = dataSource else {
-            
             return
         }
         
@@ -215,11 +197,9 @@ public class AMScatterChartView: UIView {
         prepareGraphLayers(sections:sections)
         
         for section in 0..<sections {
-            
             var values = [AMSCScatterValue]()
             let rows = dataSource.scatterChartView(scatterChartView: self, numberOfRowsInSection: section)
             for row in 0..<rows {
-                
                 let indexPath = IndexPath(row:row, section: section)
                 let value = dataSource.scatterChartView(scatterChartView: self, valueForRowAtIndexPath: indexPath)
                 values.append(value)
@@ -235,7 +215,6 @@ public class AMScatterChartView: UIView {
     }
     
     private func clearView() {
-        
         xLabels.forEach { $0.removeFromSuperview() }
         xLabels.removeAll()
         
@@ -250,12 +229,10 @@ public class AMScatterChartView: UIView {
     }
     
     private func settingAxisViewFrame() {
-        
         let a = (frame.height - space - yAxisTitleLabelHeight - space - xLabelHeight - xAxisTitleLabelHeight)
         let b = CGFloat(numberOfYAxisLabel - 1)
         var yLabelHeight = (a / b) * 0.6
         if yLabelHeight.isNaN {
-            
             yLabelHeight = 0
         }
         
@@ -287,7 +264,6 @@ public class AMScatterChartView: UIView {
     }
     
     private func settingAxisTitleLayout() {
-        
         yAxisTitleLabel.font = yAxisTitleFont
         yAxisTitleLabel.textColor = yAxisTitleColor
         
@@ -296,9 +272,7 @@ public class AMScatterChartView: UIView {
     }
     
     private func prepareYLabels() {
-        
         if numberOfYAxisLabel <= 0 {
-            
             return
         }
         
@@ -309,7 +283,6 @@ public class AMScatterChartView: UIView {
         var y = xAxisView.frame.minY - height/2
         
         for index in 0..<numberOfYAxisLabel {
-            
             let yLabel = UILabel(frame:CGRect(x: space,
                                               y: y,
                                               width: yLabelWidth - space,
@@ -322,27 +295,22 @@ public class AMScatterChartView: UIView {
             yLabel.textColor = yLabelsTextColor
             addSubview(yLabel)
             
-            if yAxisDecimalFormat == .none {
-                
+            switch yAxisDecimalFormat {
+            case .none:
                 yLabel.text = NSString(format: "%.0f", value) as String
-                
-            } else if yAxisDecimalFormat == .first {
-                
+            case .first:
                 yLabel.text = NSString(format: "%.1f", value) as String
-                
-            } else if yAxisDecimalFormat == .second {
-                
+            case .second:
                 yLabel.text = NSString(format: "%.2f", value) as String
             }
+            
             y -= height + space
             value += valueCount
         }
     }
     
     private func prepareXLabels() {
-        
         if numberOfXAxisLabel <= 0 {
-            
             return
         }
         
@@ -350,14 +318,12 @@ public class AMScatterChartView: UIView {
         var value = xAxisMinValue
         var width = (xAxisView.frame.width / CGFloat(numberOfXAxisLabel - 1)) * 0.6
         if width > (frame.width - xAxisView.frame.maxX)*2 {
-            
             width = (frame.width - xAxisView.frame.maxX)*2
         }
         let space = (xAxisView.frame.width - (width*CGFloat(numberOfXAxisLabel - 1))) / CGFloat(numberOfXAxisLabel - 1)
         var x = xAxisView.frame.minX - width/2
         
         for index in 0..<numberOfXAxisLabel {
-            
             let xLabel = UILabel(frame:CGRect(x: x,
                                               y: xAxisView.frame.maxY,
                                               width: width,
@@ -371,16 +337,12 @@ public class AMScatterChartView: UIView {
             xLabel.textColor = xLabelsTextColor
             addSubview(xLabel)
             
-            if xAxisDecimalFormat == .none {
-                
+            switch xAxisDecimalFormat {
+            case .none:
                 xLabel.text = NSString(format: "%.0f", value) as String
-                
-            } else if xAxisDecimalFormat == .first {
-                
+            case .first:
                 xLabel.text = NSString(format: "%.1f", value) as String
-                
-            } else if xAxisDecimalFormat == .second {
-                
+            case .second:
                 xLabel.text = NSString(format: "%.2f", value) as String
             }
             
@@ -390,7 +352,6 @@ public class AMScatterChartView: UIView {
     }
     
     private func prepareGraphLineLayers(positionY: CGFloat) {
-        
         let lineLayer = CALayer()
         lineLayer.frame = CGRect(x: xAxisView.frame.minX,
                                  y: positionY,
@@ -402,16 +363,13 @@ public class AMScatterChartView: UIView {
     }
     
     private func prepareGraphLayers(sections: Int) {
-        
         while graphLayers.count < sections {
-            
             let layer = CAShapeLayer()
             graphLayer.addSublayer(layer)
             graphLayers.append(layer)
         }
         
         while graphLayers.count > sections {
-            
             let layer = graphLayers.last
             layer?.removeFromSuperlayer()
             graphLayers.removeLast()
@@ -432,25 +390,19 @@ public class AMScatterChartView: UIView {
             pointType == .type3 ||
             pointType == .type5 ||
             pointType == .type7 {
-            
             graphLayer.fillColor = UIColor.clear.cgColor
-            
         } else {
-            
             graphLayer.fillColor = color.cgColor
         }
         
         let path = UIBezierPath()
         for value in values {
-            
             var x =  (value.xValue / (xAxisMaxValue - xAxisMinValue)) * graphLayer.frame.width - graphLayer.frame.width * (xAxisMinValue / (xAxisMaxValue - xAxisMinValue))
             var y = (graphLayer.frame.height + graphLayer.frame.height * (yAxisMinValue / (yAxisMaxValue - yAxisMinValue))) - ((value.yValue / (yAxisMaxValue - yAxisMinValue)) * graphLayer.frame.height)
             if y.isNaN {
-                
                 y = 0
             }
             if x.isNaN {
-                
                 x = 0
             }
             
@@ -463,32 +415,24 @@ public class AMScatterChartView: UIView {
     
     private func createPointPath(centerPoint: CGPoint,
                                  pointType: AMSCPointType) -> UIBezierPath {
-        
         if pointType == .type1 || pointType == .type2 {
-            
             return UIBezierPath(ovalIn: CGRect(x: centerPoint.x - pointRadius,
                                                y: centerPoint.y - pointRadius,
                                                width: pointRadius * 2,
                                                height: pointRadius * 2))
-            
         } else if pointType == .type3 || pointType == .type4 {
-            
             return UIBezierPath(rect: CGRect(x: centerPoint.x - pointRadius,
                                              y: centerPoint.y - pointRadius,
                                              width: pointRadius * 2,
                                              height: pointRadius * 2))
-            
         } else if pointType == .type5 || pointType == .type6 {
-            
             let path = UIBezierPath()
             path.move(to: CGPoint(x: centerPoint.x, y: centerPoint.y - pointRadius))
             path.addLine(to: CGPoint(x: centerPoint.x + pointRadius, y: centerPoint.y + pointRadius))
             path.addLine(to: CGPoint(x: centerPoint.x - pointRadius, y: centerPoint.y + pointRadius))
             path.close()
             return path
-            
         } else if pointType == .type7 || pointType == .type8 {
-            
             let path = UIBezierPath()
             path.move(to: CGPoint(x: centerPoint.x, y: centerPoint.y - pointRadius))
             path.addLine(to: CGPoint(x: centerPoint.x + pointRadius, y: centerPoint.y))
@@ -496,9 +440,7 @@ public class AMScatterChartView: UIView {
             path.addLine(to: CGPoint(x: centerPoint.x - pointRadius, y: centerPoint.y))
             path.close()
             return path
-            
         } else if pointType == .type9 {
-            
             let path = UIBezierPath()
             path.move(to: CGPoint(x: centerPoint.x - pointRadius, y: centerPoint.y - pointRadius))
             path.addLine(to: CGPoint(x: centerPoint.x + pointRadius, y: centerPoint.y + pointRadius))
@@ -514,9 +456,7 @@ public class AMScatterChartView: UIView {
     }
     
     private func showAnimation() {
-        
         for graphLayer in graphLayers {
-            
             let animation = CABasicAnimation(keyPath: "strokeEnd")
             animation.duration = animationDuration
             animation.fromValue = 0

@@ -13,18 +13,13 @@ private let AMPCSpace:CGFloat = 10
 private let AMPCDeSelectIndex:Int = -1
 
 public protocol AMPieChartViewDataSource:class {
-    
     func numberOfSections(inPieChartView pieChartView: AMPieChartView) -> Int
-    
     func pieChartView(pieChartView:AMPieChartView, valueForSection section: Int) -> CGFloat
-    
     func pieChartView(pieChartView:AMPieChartView, colorForSection section: Int) -> UIColor
 }
 
 public protocol AMPieChartViewDelegate:class {
-    
     func pieChartView(pieChartView:AMPieChartView, didSelectSection section: Int)
-    
     func pieChartView(pieChartView:AMPieChartView, didDeSelectSection section: Int)
 }
 
@@ -51,23 +46,18 @@ public class AMPieChartView: UIView {
         var isDounut = false
         
         override class func needsDisplay(forKey key: String) -> Bool {
-            
             if key == #keyPath(endAngle) || key == #keyPath(startAngle) {
-                
                 return true
             }
             return super.needsDisplay(forKey: key)
         }
         
         override init() {
-            
             super.init()
         }
         
         override init(layer: Any) {
-            
             if let layer = layer as? FanLayer {
-                
                 startAngle = layer.startAngle
                 endAngle = layer.endAngle
                 isDounut = layer.isDounut
@@ -77,12 +67,10 @@ public class AMPieChartView: UIView {
         }
         
         required init(coder aDecoder: NSCoder) {
-            
             fatalError("init(coder:) has not been implemented")
         }
         
         override func draw(in ctx: CGContext) {
-           
             // Create the path
             let centerPoint = CGPoint(x: bounds.midX, y: bounds.midY)
             let radius = (frame.width - AMPCSpace * 2)/2
@@ -90,13 +78,10 @@ public class AMPieChartView: UIView {
             
             ctx.beginPath()
             if isDounut {
-                
                 let p = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(startAngle)),
                                 y: centerPoint.y + smallRadius * CGFloat(sinf(startAngle)))
                 ctx.move(to: CGPoint(x: p.x, y: p.y))
-                
             } else {
-                
                 ctx.move(to: CGPoint(x: centerPoint.x, y: centerPoint.y))
             }
             
@@ -111,7 +96,6 @@ public class AMPieChartView: UIView {
                            clockwise: false)
             
             if isDounut {
-                
                 let p3 = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(endAngle)),
                                  y: centerPoint.y + smallRadius * CGFloat(sinf(endAngle)))
                 ctx.addLine(to: CGPoint(x: p3.x, y: p3.y))
@@ -130,9 +114,7 @@ public class AMPieChartView: UIView {
     }
     
     override public var bounds: CGRect {
-        
         didSet {
-            
             reloadData()
         }
     }
@@ -152,17 +134,13 @@ public class AMPieChartView: UIView {
     @IBInspectable public var centerLabelTextColor:UIColor = UIColor.black
     
     @IBInspectable public var centerLabelText:String = "" {
-        
         didSet {
-            
             centerLabel.text = centerLabelText
         }
     }
     
     public var centerLabelAttribetedText:NSAttributedString? = nil {
-        
         didSet {
-            
             centerLabel.attributedText = centerLabelAttribetedText
         }
     }
@@ -184,25 +162,21 @@ public class AMPieChartView: UIView {
     
     //MARK:Initialize
     required public init?(coder aDecoder: NSCoder) {
-        
         super.init(coder:aDecoder)
         initView()
     }
     
     override public init(frame: CGRect) {
-        
         super.init(frame: frame)
         backgroundColor = UIColor.clear
         initView()
     }
     
     convenience init() {
-        
         self.init(frame: CGRect.zero)
     }
     
     private func initView() {
-        
         addSubview(animationChartView)
         addSubview(chartView)
         
@@ -217,16 +191,13 @@ public class AMPieChartView: UIView {
     }
     
     override public func draw(_ rect: CGRect) {
-        
         reloadData()
     }
     
     public func reloadData() {
-    
         selectedIndex = AMPCDeSelectIndex
         settingChartViewFrame()
         guard let dataSource = dataSource else {
-            
             return
         }
         
@@ -235,8 +206,6 @@ public class AMPieChartView: UIView {
         var values = [CGFloat]()
         var colors = [UIColor]()
         for section in 0..<sections {
-            
-            
             values.append(dataSource.pieChartView(pieChartView: self, valueForSection: section))
             colors.append(dataSource.pieChartView(pieChartView: self, colorForSection: section))
         }
@@ -245,7 +214,6 @@ public class AMPieChartView: UIView {
     }
     
     public func redrawChart() {
-        
         fanLayers.forEach{$0.removeFromSuperlayer()}
         fanLayers.removeAll()
         animationFanLayers.forEach{$0.removeFromSuperlayer()}
@@ -254,7 +222,6 @@ public class AMPieChartView: UIView {
     }
     
     private func settingChartViewFrame() {
-        
         let length = (frame.width < frame.height) ? frame.width : frame.height
         chartView.frame = CGRect(x: bounds.midX - length/2,
                                   y: bounds.midY - length/2,
@@ -275,9 +242,7 @@ public class AMPieChartView: UIView {
     }
     
     private func prepareFanLayer(sections: Int) {
-        
         while fanLayers.count < sections {
-            
             let fanLayer = FanLayer()
             let animfanLayer = FanLayer()
             animationChartView.layer.addSublayer(animfanLayer)
@@ -287,7 +252,6 @@ public class AMPieChartView: UIView {
         }
         
         while fanLayers.count > sections {
-            
             fanLayers.last?.removeFromSuperlayer()
             animationFanLayers.last?.removeFromSuperlayer()
             fanLayers.removeLast()
@@ -295,7 +259,6 @@ public class AMPieChartView: UIView {
         }
         
         for (index, fanLayer) in fanLayers.enumerated() {
-            
             fanLayer.frame = chartView.bounds
             fanLayer.index = index
             animationFanLayers[index].index = index
@@ -304,11 +267,9 @@ public class AMPieChartView: UIView {
     }
 
     private func prepareFanLayers(colors: [UIColor], values: [CGFloat]) {
-        
         let sum = values.reduce(0, +)
         var angle = Float(Double.pi/2 + Double.pi)
         for (index, fanLayer) in fanLayers.enumerated() {
-            
             let animFanLayer = animationFanLayers[index]
             let rate = values[index] / sum
             fanLayer.fillColor = colors[index].cgColor
@@ -330,16 +291,13 @@ public class AMPieChartView: UIView {
     }
     
     private func showAnimation() {
-        
         for (index ,animfanLayer) in animationFanLayers.enumerated() {
-            
             CATransaction.begin()
             CATransaction.setCompletionBlock{[unowned self] in
                 
                 let animation = animfanLayer.animation(forKey: "angleAnimation")
                 
                 if animation != nil {
-                    
                     animfanLayer.removeAnimation(forKey: "angleAnimation")
                     self.animationComplete(index: index)
                 }
@@ -348,22 +306,16 @@ public class AMPieChartView: UIView {
             let fanLayer = fanLayers[index]
             let animation1 = CABasicAnimation(keyPath: "startAngle")
             if fanLayer.path == nil {
-                
                 animation1.fromValue = Float(Double.pi/2 + Double.pi)
-                
             } else {
-                
                 animation1.fromValue = animfanLayer.startAngle
             }
             animation1.toValue = animationStartAngles[index]
             
             let animation2 = CABasicAnimation(keyPath: "endAngle")
             if fanLayer.path == nil {
-                
                 animation2.fromValue = Float(Double.pi/2 + Double.pi)
-                
             } else {
-                
                 animation2.fromValue = animfanLayer.endAngle
             }
             animation2.toValue = animationEndAngles[index]
@@ -384,9 +336,7 @@ public class AMPieChartView: UIView {
     }
     
     func animationComplete(index: Int) {
-        
         if index < fanLayers.count {
-            
             let fanLayer = fanLayers[index]
             let radius = (chartView.frame.width - AMPCSpace * 2)/2
             let centerPoint = CGPoint(x: fanLayer.bounds.midX,
@@ -410,13 +360,10 @@ public class AMPieChartView: UIView {
         let piePath = UIBezierPath()
         let smallRadius = radius/2
         if isDounut {
-            
             let p = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(startAngle)),
                             y: centerPoint.y + smallRadius * CGFloat(sinf(startAngle)))
             piePath.move(to: p)
-            
         } else {
-            
             piePath.move(to: centerPoint)
         }
         
@@ -429,21 +376,17 @@ public class AMPieChartView: UIView {
                        clockwise: true)
         
         if isDounut {
-            
             let p = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(endAngle)),
                             y: centerPoint.y + smallRadius * CGFloat(sinf(endAngle)))
             piePath.addLine(to: p)
             
             if startAngle + Float(Double.pi*2) == endAngle {
-                
                 piePath.addArc(withCenter: centerPoint,
                                radius: smallRadius,
                                startAngle: CGFloat(startAngle),
                                endAngle: CGFloat(endAngle),
                                clockwise: false)
-                
             } else {
-                
                 piePath.addArc(withCenter: centerPoint,
                                radius:smallRadius,
                                startAngle:CGFloat(endAngle),
@@ -458,7 +401,6 @@ public class AMPieChartView: UIView {
     private func createPathAnimation(fromPath: UIBezierPath,
                                      toPath: UIBezierPath,
                                      animationDuration: CFTimeInterval) -> CABasicAnimation {
-        
         let animation = CABasicAnimation(keyPath: "path")
         animation.duration = animationDuration
         animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
@@ -468,7 +410,6 @@ public class AMPieChartView: UIView {
     }
     
     private func selectedFanAnimation(fanLayer: FanLayer) {
-        
         let radius = (chartView.frame.width - AMPCSpace * 2) / 2
         let centerPoint = CGPoint(x: fanLayer.bounds.midX, y: fanLayer.bounds.midY)
         let smallRadius = AMPCSpace
@@ -489,7 +430,6 @@ public class AMPieChartView: UIView {
     }
     
     private func deselectedFanAnimation(fanLayer: FanLayer) {
-        
         let radius = (chartView.frame.width - AMPCSpace * 2) / 2
         let centerPoint = CGPoint(x: fanLayer.bounds.midX, y: fanLayer.bounds.midY)
         
@@ -504,40 +444,25 @@ public class AMPieChartView: UIView {
                                             animationDuration: selectedAnimationDuration)
         fanLayer.path = animationPath.cgPath
         fanLayer.add(animation, forKey:nil)
-        
-        if let delegate = delegate {
-            
-            delegate.pieChartView(pieChartView: self, didDeSelectSection: fanLayer.index)
-        }
+        delegate?.pieChartView(pieChartView: self, didDeSelectSection: fanLayer.index)
     }
     
     @objc func tapAction(gesture: UITapGestureRecognizer) {
-        
         let point = gesture.location(in: chartView)
         fanLayers.forEach {
-            
             if UIBezierPath(cgPath: $0.path!).contains(point) {
-                
                 if selectedIndex == AMPCDeSelectIndex {
-                    
                     selectedFanAnimation(fanLayer: $0)
                     selectedIndex = $0.index
-                    
                 } else if selectedIndex == $0.index {
-                    
                     deselectedFanAnimation(fanLayer: $0)
                     selectedIndex = AMPCDeSelectIndex
-                    
                 } else {
-                    
                     selectedFanAnimation(fanLayer: $0)
                     deselectedFanAnimation(fanLayer: fanLayers[selectedIndex])
                     selectedIndex = $0.index
                 }
-                if let delegate = delegate {
-                    
-                    delegate.pieChartView(pieChartView: self, didSelectSection: selectedIndex)
-                }
+                delegate?.pieChartView(pieChartView: self, didSelectSection: selectedIndex)
             }
         }
     }

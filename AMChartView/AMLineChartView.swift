@@ -36,27 +36,18 @@ public enum AMLCPointType {
 }
 
 public protocol AMLineChartViewDataSource:class {
-    
     func numberOfSections(inLineChartView lineChartView:AMLineChartView) -> Int
-    
     func numberOfRows(inLineChartView:AMLineChartView) -> Int
-    
     func lineChartView(lineChartView:AMLineChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
-    
     func lineChartView(lineChartView:AMLineChartView, colorForSection section: Int) -> UIColor
-    
     func lineChartView(lineChartView:AMLineChartView, titleForXlabelInRow row: Int) -> String
-    
     func lineChartView(lineChartView:AMLineChartView, pointTypeForSection section: Int) -> AMLCPointType
 }
 
-
 public class AMLineChartView: UIView {
-
+    
     override public var bounds: CGRect {
-        
         didSet {
-            
             reloadData()
         }
     }
@@ -74,17 +65,13 @@ public class AMLineChartView: UIView {
     @IBInspectable public var numberOfYAxisLabel:Int = 6
     
     @IBInspectable public var yAxisTitle:String = "" {
-        
         didSet {
-            
             yAxisTitleLabel.text = yAxisTitle
         }
     }
     
     @IBInspectable public var xAxisTitle:String = "" {
-        
         didSet {
-            
             xAxisTitleLabel.text = xAxisTitle
         }
     }
@@ -143,25 +130,21 @@ public class AMLineChartView: UIView {
     
     //MARK:Initialize
     required public init?(coder aDecoder: NSCoder) {
-        
         super.init(coder:aDecoder)
         initView()
     }
     
     override public init(frame: CGRect) {
-        
         super.init(frame: frame)
         backgroundColor = UIColor.clear
         initView()
     }
     
     convenience init() {
-        
         self.init(frame: CGRect.zero)
     }
     
     private func initView() {
-        
         // y軸設定
         addSubview(yAxisView)
         yAxisTitleLabel.textAlignment = .right
@@ -178,19 +161,16 @@ public class AMLineChartView: UIView {
     }
     
     override public func draw(_ rect: CGRect) {
-        
         reloadData()
     }
     
     public func reloadData() {
-        
         clearView()
         settingAxisViewFrame()
         settingAxisTitleLayout()
         prepareYLabels()
         
         guard let dataSource = dataSource else {
-            
             return
         }
         
@@ -200,13 +180,10 @@ public class AMLineChartView: UIView {
         prepareGraphLayers(sections:sections)
         
         for section in 0..<sections {
-            
             var values = [CGFloat]()
             for row in 0..<rows {
-                
                 if section == 0 {
-                    
-                    let label = xLabels[row];
+                    let label = xLabels[row]
                     label.text = dataSource.lineChartView(lineChartView: self, titleForXlabelInRow: row)
                 }
                 
@@ -216,7 +193,6 @@ public class AMLineChartView: UIView {
             }
             
             let pointType = dataSource.lineChartView(lineChartView: self, pointTypeForSection: section)
-            
             
             let color = dataSource.lineChartView(lineChartView: self, colorForSection: section)
             prepareLineGraph(section: section,
@@ -228,15 +204,13 @@ public class AMLineChartView: UIView {
         showAnimation()
     }
     
-    func redrawChart() {
-        
+    public func redrawChart() {
         graphLayers.forEach{$0.removeFromSuperlayer()}
         graphLayers.removeAll()
         reloadData()
     }
     
     private func clearView() {
-        
         xLabels.forEach{$0.removeFromSuperview()}
         xLabels.removeAll()
         
@@ -248,12 +222,10 @@ public class AMLineChartView: UIView {
     }
     
     private func settingAxisViewFrame() {
-        
         let a = (frame.height - space - yAxisTitleLabelHeight - space - xLabelHeight - xAxisTitleLabelHeight)
         let b = CGFloat(numberOfYAxisLabel - 1)
         var yLabelHeight = (a / b) * 0.6
         if yLabelHeight.isNaN {
-            
             yLabelHeight = 0
         }
         // y軸設定
@@ -283,7 +255,6 @@ public class AMLineChartView: UIView {
     }
     
     private func settingAxisTitleLayout() {
-        
         yAxisTitleLabel.font = yAxisTitleFont
         yAxisTitleLabel.textColor = yAxisTitleColor
         
@@ -292,9 +263,7 @@ public class AMLineChartView: UIView {
     }
     
     private func prepareYLabels() {
-        
         if numberOfYAxisLabel == 0 {
-            
             return
         }
         
@@ -305,7 +274,6 @@ public class AMLineChartView: UIView {
         var y = xAxisView.frame.origin.y - height/2
         
         for index in 0..<numberOfYAxisLabel {
-            
             let yLabel = UILabel(frame:CGRect(x: space,
                                               y: y,
                                               width: yLabelWidth - space,
@@ -318,21 +286,16 @@ public class AMLineChartView: UIView {
             yLabel.textColor = yLabelsTextColor
             addSubview(yLabel)
             
-            if yAxisDecimalFormat == .none {
-                
+            switch yAxisDecimalFormat {
+            case .none:
                 yLabel.text = NSString(format: "%.0f", value) as String
-                
-            } else if yAxisDecimalFormat == .first {
-                
+            case .first:
                 yLabel.text = NSString(format: "%.1f", value) as String
-                
-            } else if yAxisDecimalFormat == .second {
-                
+            case .second:
                 yLabel.text = NSString(format: "%.2f", value) as String
             }
             
             if isHorizontalLine {
-                
                 prepareGraphLineLayers(positionY:y + height/2)
             }
             y -= height + space
@@ -341,7 +304,6 @@ public class AMLineChartView: UIView {
     }
         
     private func prepareGraphLineLayers(positionY: CGFloat) {
-        
         let lineLayer = CALayer()
         lineLayer.frame = CGRect(x: xAxisView.frame.origin.x,
                                  y: positionY,
@@ -353,15 +315,12 @@ public class AMLineChartView: UIView {
     }
     
     private func prepareXlabels(rows: Int) {
-        
         if rows == 0 {
-            
             return
         }
         
         let width = (xAxisView.frame.size.width - axisWidth) / CGFloat(rows)
         for row in 0..<rows {
-            
             let x = xAxisView.frame.origin.x + axisWidth + width * CGFloat(row)
             let y = xAxisView.frame.origin.y + axisWidth
             let xLabel = UILabel(frame:CGRect(x: x, y: y, width: width, height: xLabelHeight))
@@ -377,16 +336,13 @@ public class AMLineChartView: UIView {
     }
     
     private func prepareGraphLayers(sections: Int) {
-        
         while graphLayers.count < sections {
-            
             let graphLayer = CAShapeLayer()
             layer.addSublayer(graphLayer)
             graphLayers.append(graphLayer)
         }
         
         while graphLayers.count > sections {
-            
             let graphLayer = graphLayers.last
             graphLayer?.removeFromSuperlayer()
             graphLayers.removeLast()
@@ -402,7 +358,6 @@ public class AMLineChartView: UIView {
                                   color: UIColor,
                                   values: [CGFloat],
                                   pointType: AMLCPointType) {
-        
         let graphLayer = graphLayers[section]
         graphLayer.strokeColor = color.cgColor
         
@@ -410,33 +365,25 @@ public class AMLineChartView: UIView {
             pointType == .type3 ||
             pointType == .type5 ||
             pointType == .type7 {
-            
             graphLayer.fillColor = UIColor.clear.cgColor
-            
         } else {
-            
             graphLayer.fillColor = color.cgColor
         }
         
         let path = UIBezierPath()
         for (index, xLabel) in xLabels.enumerated() {
-            
             let value = values[index]
             let x = xLabel.frame.origin.x + xLabel.frame.width/2 - (yAxisView.frame.origin.x + axisWidth)
             var y = graphLayer.frame.height - (((value - yAxisMinValue)/(yAxisMaxValue - yAxisMinValue)) * graphLayer.frame.height)
             if y.isNaN {
-                
                 y = 0
             }
             
             let pointPath = createPointPath(positionX: x, positionY: y, pointType: pointType)
             if index == 0 {
-                
                 path.append(pointPath)
                 path.move(to: CGPoint(x: x, y: y))
-                
             } else {
-                
                 path.addLine(to: CGPoint(x: x, y: y))
                 path.append(pointPath)
                 path.move(to: CGPoint(x: x, y: y))
@@ -449,33 +396,24 @@ public class AMLineChartView: UIView {
     private func createPointPath(positionX: CGFloat,
                                   positionY: CGFloat,
                                   pointType: AMLCPointType) -> UIBezierPath {
-        
         if pointType == .type1 || pointType == .type2 {
-            
-            
             return UIBezierPath(ovalIn: CGRect(x: positionX - pointRadius,
                                                     y: positionY - pointRadius,
                                                     width: pointRadius * 2,
                                                     height: pointRadius * 2))
-            
         } else if pointType == .type3 || pointType == .type4 {
-            
             return UIBezierPath(rect: CGRect(x: positionX - pointRadius,
                                                   y: positionY - pointRadius,
                                                   width: pointRadius * 2,
                                                   height: pointRadius * 2))
-            
         } else if pointType == .type5 || pointType == .type6 {
-            
             let path = UIBezierPath()
             path.move(to: CGPoint(x: positionX, y: positionY - pointRadius))
             path.addLine(to: CGPoint(x: positionX + pointRadius, y: positionY + pointRadius))
             path.addLine(to: CGPoint(x: positionX - pointRadius, y: positionY + pointRadius))
             path.addLine(to: CGPoint(x: positionX, y: positionY - pointRadius))
             return path
-            
         } else if pointType == .type7 || pointType == .type8 {
-            
             let path = UIBezierPath()
             path.move(to: CGPoint(x: positionX, y: positionY - pointRadius))
             path.addLine(to: CGPoint(x: positionX + pointRadius, y: positionY))
@@ -483,9 +421,7 @@ public class AMLineChartView: UIView {
             path.addLine(to: CGPoint(x: positionX - pointRadius, y: positionY))
             path.addLine(to: CGPoint(x: positionX, y: positionY - pointRadius))
             return path
-            
         } else if pointType == .type9 {
-            
             let path = UIBezierPath()
             path.move(to: CGPoint(x: positionX - pointRadius, y: positionY - pointRadius))
             path.addLine(to: CGPoint(x: positionX + pointRadius, y: positionY + pointRadius))
@@ -501,21 +437,16 @@ public class AMLineChartView: UIView {
     }
     
     private func showAnimation() {
-        
         for (index, graphLayer) in graphLayers.enumerated() {
-            
             let animationPath = animationPaths[index]
             if graphLayer.path == nil {
-                
                 let animation = CABasicAnimation(keyPath: "strokeEnd")
                 animation.duration = animationDuration
                 animation.fromValue = 0
                 animation.toValue = 1
                 graphLayer.path = animationPath.cgPath
                 graphLayer.add(animation, forKey: nil)
-                
             } else {
-                
                 let animation = CABasicAnimation(keyPath: "path")
                 animation.duration = animationDuration
                 animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)

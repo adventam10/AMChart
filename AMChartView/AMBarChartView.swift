@@ -15,24 +15,16 @@ public enum AMBCDecimalFormat {
 }
 
 public protocol AMBarChartViewDataSource:class {
-    
     func numberOfSections(inBarChartView barChartView: AMBarChartView) -> Int
-    
     func barChartView(barChartView: AMBarChartView, numberOfRowsInSection section: Int) -> Int
-    
     func barChartView(barChartView: AMBarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
-    
     func barChartView(barChartView: AMBarChartView, colorForRowAtIndexPath indexPath: IndexPath) -> UIColor
-    
     func barChartView(barChartView: AMBarChartView, titleForXlabelInSection section: Int) -> String
 }
 
 public class AMBarChartView: UIView {
-
     override public var bounds: CGRect {
-        
         didSet {
-            
             reloadData()
         }
     }
@@ -46,17 +38,13 @@ public class AMBarChartView: UIView {
     @IBInspectable public var numberOfYAxisLabel:Int = 6
     
     @IBInspectable public var yAxisTitle:String = "" {
-        
         didSet {
-            
             yAxisTitleLabel.text = yAxisTitle
         }
     }
     
     @IBInspectable public var xAxisTitle:String = "" {
-        
         didSet {
-            
             xAxisTitleLabel.text = xAxisTitle
         }
     }
@@ -121,25 +109,21 @@ public class AMBarChartView: UIView {
     
     //MARK:Initialize
     required public init?(coder aDecoder: NSCoder) {
-        
         super.init(coder:aDecoder)
         initView()
     }
     
     override public init(frame: CGRect) {
-        
         super.init(frame: frame)
         backgroundColor = UIColor.clear
         initView()
     }
     
     convenience init() {
-        
         self.init(frame: CGRect.zero)
     }
     
     private func initView() {
-        
         // y軸設定
         addSubview(yAxisView)
         yAxisTitleLabel.textAlignment = .right
@@ -159,26 +143,22 @@ public class AMBarChartView: UIView {
     }
     
     override public func draw(_ rect: CGRect) {
-        
         reloadData()
     }
     
     public func reloadData() {
-        
         clearView()
         settingAxisViewFrame()
         settingAxisTitleLayout()
         prepareYLabels()
         
         guard let dataSource = dataSource else {
-            
             return
         }
         
         let sections = dataSource.numberOfSections(inBarChartView: self)
         
         for section in 0..<sections {
-            
             prepareXlabels(sections:sections, section:section)
             prepareBarLayers(section:section)
             
@@ -189,7 +169,6 @@ public class AMBarChartView: UIView {
             var values = [CGFloat]()
             var colors = [UIColor]()
             for row in 0..<rows {
-                
                 let indexPath = IndexPath(row:row, section: section)
                 let value = dataSource.barChartView(barChartView: self, valueForRowAtIndexPath: indexPath)
                 let color = dataSource.barChartView(barChartView: self, colorForRowAtIndexPath: indexPath)
@@ -204,7 +183,6 @@ public class AMBarChartView: UIView {
     }
     
     private func clearView() {
-        
         xLabels.forEach {$0.removeFromSuperview()}
         xLabels.removeAll()
         
@@ -222,12 +200,10 @@ public class AMBarChartView: UIView {
     }
     
     private func settingAxisViewFrame() {
-        
         let a = (frame.height - space - yAxisTitleLabelHeight - space - xLabelHeight - xAxisTitleLabelHeight)
         let b = CGFloat(numberOfYAxisLabel - 1)
         var yLabelHeight = (a / b) * 0.6
         if yLabelHeight.isNaN {
-            
             yLabelHeight = 0
         }
         
@@ -263,7 +239,6 @@ public class AMBarChartView: UIView {
     }
     
     private func settingAxisTitleLayout() {
-        
         yAxisTitleLabel.font = yAxisTitleFont
         yAxisTitleLabel.textColor = yAxisTitleColor
         
@@ -272,9 +247,7 @@ public class AMBarChartView: UIView {
     }
     
     private func prepareYLabels() {
-        
         if numberOfYAxisLabel == 0 {
-            
             return
         }
         
@@ -285,7 +258,6 @@ public class AMBarChartView: UIView {
         var y = xAxisView.frame.minY - height/2
         
         for index in 0..<numberOfYAxisLabel {
-            
             let yLabel = UILabel(frame:CGRect(x: space,
                                               y: y,
                                               width: yLabelWidth - space,
@@ -298,21 +270,16 @@ public class AMBarChartView: UIView {
             yLabel.textColor = yLabelsTextColor
             addSubview(yLabel)
             
-            if yAxisDecimalFormat == .none {
-                
+            switch yAxisDecimalFormat {
+            case .none:
                 yLabel.text = NSString(format: "%.0f", value) as String
-                
-            } else if yAxisDecimalFormat == .first {
-                
+            case .first:
                 yLabel.text = NSString(format: "%.1f", value) as String
-                
-            } else if yAxisDecimalFormat == .second {
-                
+            case .second:
                 yLabel.text = NSString(format: "%.2f", value) as String
             }
             
             if isHorizontalLine {
-                
                 prepareGraphLineLayers(positionY:y + height/2)
             }
             y -= height + space
@@ -320,8 +287,7 @@ public class AMBarChartView: UIView {
         }
     }
     
-    private func prepareGraphLineLayers(positionY :CGFloat) {
-        
+    private func prepareGraphLineLayers(positionY: CGFloat) {
         let lineLayer = CALayer()
         lineLayer.frame = CGRect(x: xAxisView.frame.minX,
                                  y: positionY,
@@ -333,9 +299,7 @@ public class AMBarChartView: UIView {
     }
     
     private func prepareXlabels(sections: Int, section: Int) {
-        
         if sections == 0 {
-            
             return
         }
         
@@ -358,7 +322,6 @@ public class AMBarChartView: UIView {
     }
     
     private func prepareBarLayers(section: Int) {
-        
         let xLabel = xLabels[section]
         let barLayer = CALayer()
         barLayer.frame = CGRect(x: xLabel.frame.minX,
@@ -370,7 +333,6 @@ public class AMBarChartView: UIView {
     }
     
     private func prepareBarGraph(section: Int, colors: [UIColor], values: [CGFloat]) {
-        
         let sum = values.reduce(0, +)
         let barLayer = barLayers[section]
         barLayer.masksToBounds = true
@@ -381,17 +343,14 @@ public class AMBarChartView: UIView {
         
         var y = barLayer.frame.height + (barLayer.frame.height * yAxisMinValue) / (sum - yAxisMinValue)
         if y.isNaN {
-            
             y = 0
         }
         
         for (index, color) in colors.enumerated() {
-            
             let value = values[index]
             var height = (value/(sum - yAxisMinValue)) * barLayer.frame.height
             if height.isNaN {
-                
-                height = 0;
+                height = 0
             }
             
             let valueLayer = CAShapeLayer()
@@ -404,17 +363,15 @@ public class AMBarChartView: UIView {
             path.addLine(to: CGPoint(x: barLayer.frame.width, y: y))
             path.addLine(to: CGPoint(x: barLayer.frame.width, y: y - height))
             path.addLine(to: CGPoint(x: 0, y: y - height))
-            valueLayer.path = path.cgPath;
+            valueLayer.path = path.cgPath
             
             barLayer.addSublayer(valueLayer)
             y -= height
         }
     }
     
-    private func showAnimation (){
-                
+    private func showAnimation() {
         for barLayer in barLayers {
-            
             let startPath = UIBezierPath()
             startPath.move(to: CGPoint(x: 0, y: barLayer.frame.height))
             startPath.addLine(to: CGPoint(x: 0, y: barLayer.frame.height))
@@ -423,7 +380,6 @@ public class AMBarChartView: UIView {
             startPath.addLine(to: CGPoint(x: 0, y: barLayer.frame.height))
             
             for layer in barLayer.sublayers! {
-                
                 let valueLayer = layer as! CAShapeLayer
                 let animationPath = UIBezierPath(cgPath: valueLayer.path!)
                 let animation = CABasicAnimation(keyPath: "path")

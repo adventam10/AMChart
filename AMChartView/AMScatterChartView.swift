@@ -37,10 +37,10 @@ public enum AMSCPointType {
 
 public struct AMSCScatterValue {
     
-    var xValue : CGFloat = 0
-    var yValue : CGFloat = 0
+    public var xValue : CGFloat = 0
+    public var yValue : CGFloat = 0
     
-    init(x :CGFloat, y :CGFloat) {
+    public init(x :CGFloat, y :CGFloat) {
         xValue = x
         yValue = y
     }

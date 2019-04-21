@@ -47,11 +47,11 @@ public struct AMSCScatterValue {
 }
 
 public protocol AMScatterChartViewDataSource:class {
-    func numberOfSections(inScatterChartView scatterChartView:AMScatterChartView) -> Int
-    func scatterChartView(scatterChartView:AMScatterChartView, numberOfRowsInSection section: Int) -> Int
-    func scatterChartView(scatterChartView:AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMSCScatterValue
-    func scatterChartView(scatterChartView:AMScatterChartView, colorForSection section: Int) -> UIColor
-    func scatterChartView(scatterChartView:AMScatterChartView, pointTypeForSection section: Int) -> AMSCPointType
+    func numberOfSections(in scatterChartView: AMScatterChartView) -> Int
+    func scatterChartView(_ scatterChartView: AMScatterChartView, numberOfRowsInSection section: Int) -> Int
+    func scatterChartView(_ scatterChartView: AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMSCScatterValue
+    func scatterChartView(_ scatterChartView: AMScatterChartView, colorForSection section: Int) -> UIColor
+    func scatterChartView(_ scatterChartView: AMScatterChartView, pointTypeForSection section: Int) -> AMSCPointType
 }
 
 public class AMScatterChartView: UIView {
@@ -193,19 +193,19 @@ public class AMScatterChartView: UIView {
             return
         }
         
-        let sections = dataSource.numberOfSections(inScatterChartView: self)
+        let sections = dataSource.numberOfSections(in: self)
         prepareGraphLayers(sections:sections)
         
         for section in 0..<sections {
             var values = [AMSCScatterValue]()
-            let rows = dataSource.scatterChartView(scatterChartView: self, numberOfRowsInSection: section)
+            let rows = dataSource.scatterChartView(self, numberOfRowsInSection: section)
             for row in 0..<rows {
                 let indexPath = IndexPath(row:row, section: section)
-                let value = dataSource.scatterChartView(scatterChartView: self, valueForRowAtIndexPath: indexPath)
+                let value = dataSource.scatterChartView(self, valueForRowAtIndexPath: indexPath)
                 values.append(value)
             }
-            let pointType = dataSource.scatterChartView(scatterChartView: self, pointTypeForSection: section)
-            let color = dataSource.scatterChartView(scatterChartView: self, colorForSection: section)
+            let pointType = dataSource.scatterChartView(self, pointTypeForSection: section)
+            let color = dataSource.scatterChartView(self, colorForSection: section)
             prepareGraph(section: section,
                          color: color,
                          values: values,

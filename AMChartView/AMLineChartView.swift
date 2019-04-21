@@ -36,12 +36,12 @@ public enum AMLCPointType {
 }
 
 public protocol AMLineChartViewDataSource:class {
-    func numberOfSections(inLineChartView lineChartView:AMLineChartView) -> Int
-    func numberOfRows(inLineChartView:AMLineChartView) -> Int
-    func lineChartView(lineChartView:AMLineChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
-    func lineChartView(lineChartView:AMLineChartView, colorForSection section: Int) -> UIColor
-    func lineChartView(lineChartView:AMLineChartView, titleForXlabelInRow row: Int) -> String
-    func lineChartView(lineChartView:AMLineChartView, pointTypeForSection section: Int) -> AMLCPointType
+    func numberOfSections(in lineChartView: AMLineChartView) -> Int
+    func numberOfRows(in lineChartView: AMLineChartView) -> Int
+    func lineChartView(_ lineChartView: AMLineChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
+    func lineChartView(_ lineChartView: AMLineChartView, colorForSection section: Int) -> UIColor
+    func lineChartView(_ lineChartView: AMLineChartView, titleForXlabelInRow row: Int) -> String
+    func lineChartView(_ lineChartView: AMLineChartView, pointTypeForSection section: Int) -> AMLCPointType
 }
 
 public class AMLineChartView: UIView {
@@ -174,8 +174,8 @@ public class AMLineChartView: UIView {
             return
         }
         
-        let sections = dataSource.numberOfSections(inLineChartView: self)
-        let rows = dataSource.numberOfRows(inLineChartView: self)
+        let sections = dataSource.numberOfSections(in: self)
+        let rows = dataSource.numberOfRows(in: self)
         prepareXlabels(rows:rows)
         prepareGraphLayers(sections:sections)
         
@@ -184,17 +184,17 @@ public class AMLineChartView: UIView {
             for row in 0..<rows {
                 if section == 0 {
                     let label = xLabels[row]
-                    label.text = dataSource.lineChartView(lineChartView: self, titleForXlabelInRow: row)
+                    label.text = dataSource.lineChartView(self, titleForXlabelInRow: row)
                 }
                 
                 let indexPath = IndexPath(row:row, section: section)
-                let value = dataSource.lineChartView(lineChartView: self, valueForRowAtIndexPath: indexPath)
+                let value = dataSource.lineChartView(self, valueForRowAtIndexPath: indexPath)
                 values.append(value)
             }
             
-            let pointType = dataSource.lineChartView(lineChartView: self, pointTypeForSection: section)
+            let pointType = dataSource.lineChartView(self, pointTypeForSection: section)
             
-            let color = dataSource.lineChartView(lineChartView: self, colorForSection: section)
+            let color = dataSource.lineChartView(self, colorForSection: section)
             prepareLineGraph(section: section,
                              color: color,
                              values: values,

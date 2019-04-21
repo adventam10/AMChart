@@ -13,14 +13,14 @@ private let AMPCSpace:CGFloat = 10
 private let AMPCDeSelectIndex:Int = -1
 
 public protocol AMPieChartViewDataSource:class {
-    func numberOfSections(inPieChartView pieChartView: AMPieChartView) -> Int
-    func pieChartView(pieChartView:AMPieChartView, valueForSection section: Int) -> CGFloat
-    func pieChartView(pieChartView:AMPieChartView, colorForSection section: Int) -> UIColor
+    func numberOfSections(in pieChartView: AMPieChartView) -> Int
+    func pieChartView(_ pieChartView: AMPieChartView, valueForSection section: Int) -> CGFloat
+    func pieChartView(_ pieChartView: AMPieChartView, colorForSection section: Int) -> UIColor
 }
 
 public protocol AMPieChartViewDelegate:class {
-    func pieChartView(pieChartView:AMPieChartView, didSelectSection section: Int)
-    func pieChartView(pieChartView:AMPieChartView, didDeSelectSection section: Int)
+    func pieChartView(_ pieChartView: AMPieChartView, didSelectSection section: Int)
+    func pieChartView(_ pieChartView: AMPieChartView, didDeSelectSection section: Int)
 }
 
 public class AMPieChartView: UIView {
@@ -195,13 +195,13 @@ public class AMPieChartView: UIView {
             return
         }
         
-        let sections = dataSource.numberOfSections(inPieChartView: self)
+        let sections = dataSource.numberOfSections(in: self)
         prepareFanLayer(sections: sections)
         var values = [CGFloat]()
         var colors = [UIColor]()
         for section in 0..<sections {
-            values.append(dataSource.pieChartView(pieChartView: self, valueForSection: section))
-            colors.append(dataSource.pieChartView(pieChartView: self, colorForSection: section))
+            values.append(dataSource.pieChartView(self, valueForSection: section))
+            colors.append(dataSource.pieChartView(self, colorForSection: section))
         }
         prepareFanLayers(colors: colors, values: values)
         showAnimation()
@@ -438,7 +438,7 @@ public class AMPieChartView: UIView {
                                             animationDuration: selectedAnimationDuration)
         fanLayer.path = animationPath.cgPath
         fanLayer.add(animation, forKey:nil)
-        delegate?.pieChartView(pieChartView: self, didDeSelectSection: fanLayer.index)
+        delegate?.pieChartView(self, didDeSelectSection: fanLayer.index)
     }
     
     @objc func tapAction(gesture: UITapGestureRecognizer) {
@@ -456,7 +456,7 @@ public class AMPieChartView: UIView {
                     deselectedFanAnimation(fanLayer: fanLayers[selectedIndex])
                     selectedIndex = $0.index
                 }
-                delegate?.pieChartView(pieChartView: self, didSelectSection: selectedIndex)
+                delegate?.pieChartView(self, didSelectSection: selectedIndex)
             }
         }
     }

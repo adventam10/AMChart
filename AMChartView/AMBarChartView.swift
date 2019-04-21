@@ -15,11 +15,11 @@ public enum AMBCDecimalFormat {
 }
 
 public protocol AMBarChartViewDataSource:class {
-    func numberOfSections(inBarChartView barChartView: AMBarChartView) -> Int
-    func barChartView(barChartView: AMBarChartView, numberOfRowsInSection section: Int) -> Int
-    func barChartView(barChartView: AMBarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
-    func barChartView(barChartView: AMBarChartView, colorForRowAtIndexPath indexPath: IndexPath) -> UIColor
-    func barChartView(barChartView: AMBarChartView, titleForXlabelInSection section: Int) -> String
+    func numberOfSections(in barChartView: AMBarChartView) -> Int
+    func barChartView(_ barChartView: AMBarChartView, numberOfRowsInSection section: Int) -> Int
+    func barChartView(_ barChartView: AMBarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
+    func barChartView(_ barChartView: AMBarChartView, colorForRowAtIndexPath indexPath: IndexPath) -> UIColor
+    func barChartView(_ barChartView: AMBarChartView, titleForXlabelInSection section: Int) -> String
 }
 
 public class AMBarChartView: UIView {
@@ -156,22 +156,22 @@ public class AMBarChartView: UIView {
             return
         }
         
-        let sections = dataSource.numberOfSections(inBarChartView: self)
+        let sections = dataSource.numberOfSections(in: self)
         
         for section in 0..<sections {
             prepareXlabels(sections:sections, section:section)
             prepareBarLayers(section:section)
             
             let label = xLabels[section]
-            label.text = dataSource.barChartView(barChartView: self, titleForXlabelInSection: section)
+            label.text = dataSource.barChartView(self, titleForXlabelInSection: section)
             
-            let rows = dataSource.barChartView(barChartView: self, numberOfRowsInSection: section)
+            let rows = dataSource.barChartView(self, numberOfRowsInSection: section)
             var values = [CGFloat]()
             var colors = [UIColor]()
             for row in 0..<rows {
                 let indexPath = IndexPath(row:row, section: section)
-                let value = dataSource.barChartView(barChartView: self, valueForRowAtIndexPath: indexPath)
-                let color = dataSource.barChartView(barChartView: self, colorForRowAtIndexPath: indexPath)
+                let value = dataSource.barChartView(self, valueForRowAtIndexPath: indexPath)
+                let color = dataSource.barChartView(self, colorForRowAtIndexPath: indexPath)
                 values.append(value)
                 colors.append(color)
             }

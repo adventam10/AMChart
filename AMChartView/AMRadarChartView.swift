@@ -15,16 +15,16 @@ public enum AMRCDecimalFormat {
 }
 
 public protocol AMRadarChartViewDataSource: class {
-    func numberOfSections(inRadarChartView radarChartView:AMRadarChartView) -> Int
-    func numberOfRows(inRadarChartView radarChartView:AMRadarChartView) -> Int
-    func radarChartView(radarChartView:AMRadarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
-    func radarChartView(radarChartView:AMRadarChartView, fillColorForSection section: Int) -> UIColor
-    func radarChartView(radarChartView:AMRadarChartView, strokeColorForSection section: Int) -> UIColor
-    func radarChartView(radarChartView:AMRadarChartView, titleForXlabelInRow row: Int) -> String
+    func numberOfSections(in radarChartView: AMRadarChartView) -> Int
+    func numberOfRows(in radarChartView: AMRadarChartView) -> Int
+    func radarChartView(_ radarChartView: AMRadarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
+    func radarChartView(_ radarChartView: AMRadarChartView, fillColorForSection section: Int) -> UIColor
+    func radarChartView(_ radarChartView: AMRadarChartView, strokeColorForSection section: Int) -> UIColor
+    func radarChartView(_ radarChartView: AMRadarChartView, titleForXlabelInRow row: Int) -> String
 }
 
 extension AMRadarChartViewDataSource {
-    func radarChartView(radarChartView:AMRadarChartView,
+    func radarChartView(radarChartView: AMRadarChartView,
                         titleForXlabelInRow row: Int) -> String {
         return ""
     }
@@ -348,8 +348,8 @@ public class AMRadarChartView: UIView {
             return
         }
         
-        let sections = dataSource.numberOfSections(inRadarChartView: self)
-        let rows = dataSource.numberOfRows(inRadarChartView: self)
+        let sections = dataSource.numberOfSections(in: self)
+        let rows = dataSource.numberOfRows(in: self)
         
         if (rows < 3) {
             return
@@ -370,12 +370,12 @@ public class AMRadarChartView: UIView {
                 }
                 
                 let indexPath = IndexPath(row:row, section: section)
-                let value = dataSource.radarChartView(radarChartView: self, valueForRowAtIndexPath: indexPath)
+                let value = dataSource.radarChartView(self, valueForRowAtIndexPath: indexPath)
                 values.append(value)
             }
             
-            let fillColor = dataSource.radarChartView(radarChartView: self, fillColorForSection:section)
-            let strokeColor = dataSource.radarChartView(radarChartView: self, strokeColorForSection:section)
+            let fillColor = dataSource.radarChartView(self, fillColorForSection:section)
+            let strokeColor = dataSource.radarChartView(self, strokeColorForSection:section)
             prepareGraphLayers(section:section,
                                rows:rows,
                                fillColor:fillColor,

@@ -518,7 +518,7 @@ public class AMLineChartView: UIView {
                 
                 let animation = CABasicAnimation(keyPath: "path")
                 animation.duration = animationDuration
-                animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+                animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
                 animation.fromValue = UIBezierPath(cgPath: graphLayer.path!).cgPath
                 animation.toValue = animationPath.cgPath
                 graphLayer.path = animationPath.cgPath

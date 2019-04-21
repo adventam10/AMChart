@@ -428,7 +428,7 @@ public class AMBarChartView: UIView {
                 let animationPath = UIBezierPath(cgPath: valueLayer.path!)
                 let animation = CABasicAnimation(keyPath: "path")
                 animation.duration = animationDuration
-                animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+                animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
                 animation.fromValue = startPath.cgPath
                 animation.toValue = animationPath.cgPath
                 valueLayer.path = animationPath.cgPath

@@ -235,8 +235,8 @@ public class AMRadarChartView: UIView {
             
             graphLayer.frame = radarChartLayer.frame
             graphLayer.lineWidth = borderLineWidth
-            graphLayer.lineJoin = kCALineJoinRound
-            graphLayer.lineCap = kCALineCapRound
+            graphLayer.lineJoin = CAShapeLayerLineJoin.round
+            graphLayer.lineCap = CAShapeLayerLineCap.round
             graphLayer.lineDashPattern = (isDottedLine) ? [5, 6] : nil
         }
     }
@@ -380,7 +380,7 @@ public class AMRadarChartView: UIView {
             
             let animation = CABasicAnimation(keyPath: "path")
             animation.duration = animationDuration;
-            animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+            animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
             animation.fromValue = UIBezierPath(cgPath: graphLayer.path!).cgPath
             animation.toValue = animationPaths[index].cgPath
             graphLayer.path = animationPaths[index].cgPath;

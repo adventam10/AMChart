@@ -461,7 +461,7 @@ public class AMPieChartView: UIView {
         
         let animation = CABasicAnimation(keyPath: "path")
         animation.duration = animationDuration
-        animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
         animation.fromValue = fromPath.cgPath
         animation.toValue = toPath.cgPath
         return animation

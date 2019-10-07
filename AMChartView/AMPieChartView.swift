@@ -8,17 +8,16 @@
 
 import UIKit
 
-private let AMPCSpace:CGFloat = 10
+private let AMPCSpace: CGFloat = 10
+private let AMPCDeSelectIndex: Int = -1
 
-private let AMPCDeSelectIndex:Int = -1
-
-public protocol AMPieChartViewDataSource:class {
+public protocol AMPieChartViewDataSource: AnyObject {
     func numberOfSections(in pieChartView: AMPieChartView) -> Int
     func pieChartView(_ pieChartView: AMPieChartView, valueForSection section: Int) -> CGFloat
     func pieChartView(_ pieChartView: AMPieChartView, colorForSection section: Int) -> UIColor
 }
 
-public protocol AMPieChartViewDelegate:class {
+public protocol AMPieChartViewDelegate: AnyObject {
     func pieChartView(_ pieChartView: AMPieChartView, didSelectSection section: Int)
     func pieChartView(_ pieChartView: AMPieChartView, didDeSelectSection section: Int)
 }
@@ -26,17 +25,11 @@ public protocol AMPieChartViewDelegate:class {
 public class AMPieChartView: UIView {
 
     class FanLayer: CAShapeLayer {
-        
-        var index:Int = 0
-        
-        @objc var startAngle:Float = 0
-        
-        @objc var endAngle:Float = 0
-        
-        var value:CGFloat = 0
-        
-        var rate:CGFloat = 0
-        
+        var index: Int = 0
+        @objc var startAngle: Float = 0
+        @objc var endAngle: Float = 0
+        var value: CGFloat = 0
+        var rate: CGFloat = 0
         var isDounut = false
         
         override class func needsDisplay(forKey key: String) -> Bool {
@@ -107,54 +100,42 @@ public class AMPieChartView: UIView {
         }
     }
     
-    override public var bounds: CGRect {
-        didSet {
-            reloadData()
-        }
-    }
-
-    weak public var dataSource:AMPieChartViewDataSource?
-    
-    weak public var delegate:AMPieChartViewDelegate?
-    
-    public var animationDuration:CFTimeInterval = 0.6
-    
-    public var selectedAnimationDuration:CFTimeInterval = 0.3
-    
-    @IBInspectable public var isDounut:Bool = false
-    
-    @IBInspectable public var centerLabelFont:UIFont = UIFont.systemFont(ofSize: 15)
-
-    @IBInspectable public var centerLabelTextColor:UIColor = UIColor.black
-    
-    @IBInspectable public var centerLabelText:String = "" {
+    @IBInspectable public var isDounut: Bool = false
+    @IBInspectable public var centerLabelFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var centerLabelTextColor: UIColor = .black
+    @IBInspectable public var centerLabelText: String = "" {
         didSet {
             centerLabel.text = centerLabelText
         }
     }
     
-    public var centerLabelAttribetedText:NSAttributedString? = nil {
+    weak public var dataSource: AMPieChartViewDataSource?
+    weak public var delegate: AMPieChartViewDelegate?
+    public var animationDuration: CFTimeInterval = 0.6
+    public var selectedAnimationDuration: CFTimeInterval = 0.3
+    public var centerLabelAttribetedText: NSAttributedString? = nil {
         didSet {
             centerLabel.attributedText = centerLabelAttribetedText
         }
     }
+
+    override public var bounds: CGRect {
+        didSet {
+            reloadData()
+        }
+    }
+    
+    private let chartView = UIView()
+    private let animationChartView = UIView()
+    private var selectedIndex: Int = AMPCDeSelectIndex
+    private let centerLabel = UILabel()
     
     private var fanLayers = [FanLayer]()
-    
     private var animationFanLayers = [FanLayer]()
-    
     private var animationStartAngles = [Float]()
     private var animationEndAngles = [Float]()
     
-    private let chartView = UIView()
-    
-    private let animationChartView = UIView()
-    
-    private var selectedIndex:Int = AMPCDeSelectIndex
-    
-    private let centerLabel = UILabel()
-    
-    //MARK:Initialize
+    // MARK:- Initialize
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
         initView()
@@ -162,12 +143,12 @@ public class AMPieChartView: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.clear
+        backgroundColor = .clear
         initView()
     }
     
     convenience init() {
-        self.init(frame: CGRect.zero)
+        self.init(frame: .zero)
     }
     
     private func initView() {
@@ -188,6 +169,7 @@ public class AMPieChartView: UIView {
         reloadData()
     }
     
+    // MARK:- Reload
     public func reloadData() {
         selectedIndex = AMPCDeSelectIndex
         settingChartViewFrame()
@@ -208,13 +190,14 @@ public class AMPieChartView: UIView {
     }
     
     public func redrawChart() {
-        fanLayers.forEach{$0.removeFromSuperlayer()}
+        fanLayers.forEach { $0.removeFromSuperlayer() }
         fanLayers.removeAll()
-        animationFanLayers.forEach{$0.removeFromSuperlayer()}
+        animationFanLayers.forEach { $0.removeFromSuperlayer() }
         animationFanLayers.removeAll()
         reloadData()
     }
     
+    // MARK:- Draw
     private func settingChartViewFrame() {
         let length = (frame.width < frame.height) ? frame.width : frame.height
         chartView.frame = CGRect(x: bounds.midX - length/2,
@@ -383,8 +366,8 @@ public class AMPieChartView: UIView {
             } else {
                 piePath.addArc(withCenter: centerPoint,
                                radius:smallRadius,
-                               startAngle:CGFloat(endAngle),
-                               endAngle:CGFloat(startAngle) + CGFloat(Double.pi*2),
+                               startAngle: CGFloat(endAngle),
+                               endAngle: CGFloat(startAngle) + CGFloat(Double.pi*2),
                                clockwise:false)
             }
         }
@@ -403,6 +386,7 @@ public class AMPieChartView: UIView {
         return animation
     }
     
+    // MARK:- Select/Deselect
     private func selectedFanAnimation(fanLayer: FanLayer) {
         let radius = (chartView.frame.width - AMPCSpace * 2) / 2
         let centerPoint = CGPoint(x: fanLayer.bounds.midX, y: fanLayer.bounds.midY)

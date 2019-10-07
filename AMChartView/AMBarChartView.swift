@@ -14,7 +14,7 @@ public enum AMBCDecimalFormat {
     case second
 }
 
-public protocol AMBarChartViewDataSource:class {
+public protocol AMBarChartViewDataSource: AnyObject {
     func numberOfSections(in barChartView: AMBarChartView) -> Int
     func barChartView(_ barChartView: AMBarChartView, numberOfRowsInSection section: Int) -> Int
     func barChartView(_ barChartView: AMBarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
@@ -23,91 +23,60 @@ public protocol AMBarChartViewDataSource:class {
 }
 
 public class AMBarChartView: UIView {
+    
+    @IBInspectable public var yAxisMaxValue: CGFloat = 1000
+    @IBInspectable public var yAxisMinValue: CGFloat = 0
+    @IBInspectable public var numberOfYAxisLabel: Int = 6
+    @IBInspectable public var yLabelWidth: CGFloat = 50.0
+    @IBInspectable public var xLabelHeight: CGFloat = 30.0
+    @IBInspectable public var axisColor: UIColor = .black
+    @IBInspectable public var axisWidth: CGFloat = 1.0
+    @IBInspectable public var barSpace: CGFloat = 10
+    @IBInspectable public var yAxisTitleFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var xAxisTitleFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var xAxisTitleLabelHeight: CGFloat = 50.0
+    @IBInspectable public var yAxisTitleLabelHeight: CGFloat = 50.0
+    @IBInspectable public var yLabelsFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var xLabelsFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var yAxisTitleColor: UIColor = .black
+    @IBInspectable public var xAxisTitleColor: UIColor = .black
+    @IBInspectable public var yLabelsTextColor: UIColor = .black
+    @IBInspectable public var xLabelsTextColor: UIColor = .black
+    @IBInspectable public var isHorizontalLine: Bool = false
+    @IBInspectable public var yAxisTitle: String = "" {
+        didSet {
+            yAxisTitleLabel.text = yAxisTitle
+        }
+    }
+    @IBInspectable public var xAxisTitle: String = "" {
+        didSet {
+            xAxisTitleLabel.text = xAxisTitle
+        }
+    }
+    
+    weak public var dataSource: AMBarChartViewDataSource?
+    public var yAxisDecimalFormat: AMBCDecimalFormat = .none
+    public var animationDuration: CFTimeInterval = 0.6
+    
     override public var bounds: CGRect {
         didSet {
             reloadData()
         }
     }
     
-    weak public var dataSource:AMBarChartViewDataSource?
-    
-    @IBInspectable public var yAxisMaxValue:CGFloat = 1000
-    
-    @IBInspectable public var yAxisMinValue:CGFloat = 0
-    
-    @IBInspectable public var numberOfYAxisLabel:Int = 6
-    
-    @IBInspectable public var yAxisTitle:String = "" {
-        didSet {
-            yAxisTitleLabel.text = yAxisTitle
-        }
-    }
-    
-    @IBInspectable public var xAxisTitle:String = "" {
-        didSet {
-            xAxisTitleLabel.text = xAxisTitle
-        }
-    }
-    
-    @IBInspectable public var yLabelWidth:CGFloat = 50.0
-    
-    @IBInspectable public var xLabelHeight:CGFloat = 30.0
-    
-    @IBInspectable public var axisColor:UIColor = UIColor.black
-    
-    @IBInspectable public var axisWidth:CGFloat = 1.0
-    
-    @IBInspectable public var barSpace:CGFloat = 10
-    
-    @IBInspectable public var yAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var xAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var xAxisTitleLabelHeight:CGFloat = 50.0
-    
-    @IBInspectable public var yAxisTitleLabelHeight:CGFloat = 50.0
-    
-    @IBInspectable public var yLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var xLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var yAxisTitleColor:UIColor = UIColor.black
-    
-    @IBInspectable public var xAxisTitleColor:UIColor = UIColor.black
-    
-    @IBInspectable public var yLabelsTextColor:UIColor = UIColor.black
-    
-    @IBInspectable public var xLabelsTextColor:UIColor = UIColor.black
-    
-    public var yAxisDecimalFormat:AMBCDecimalFormat = .none
-
-    public var animationDuration:CFTimeInterval = 0.6
-    
-    @IBInspectable public var isHorizontalLine:Bool = false
-    
-    private let space:CGFloat = 10
-    
+    private let space: CGFloat = 10
     private let xAxisView = UIView()
-    
     private let yAxisView = UIView()
-    
     private var xLabels = [UILabel]()
-    
     private var yLabels = [UILabel]()
-    
     private var barLayers = [CALayer]()
-    
     private let xAxisTitleLabel = UILabel()
-    
     private let yAxisTitleLabel = UILabel()
-    
     private var horizontalLineLayers = [CALayer]()
-    
     private var graphLineLayers = [CAShapeLayer]()
-    
     private var graphLineLayer = CALayer()
     
-    //MARK:Initialize
+    // MARK:- Initialize
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
         initView()
@@ -115,12 +84,12 @@ public class AMBarChartView: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.clear
+        backgroundColor = .clear
         initView()
     }
     
     convenience init() {
-        self.init(frame: CGRect.zero)
+        self.init(frame: .zero)
     }
     
     private func initView() {
@@ -146,6 +115,7 @@ public class AMBarChartView: UIView {
         reloadData()
     }
     
+    // MARK:- Reload
     public func reloadData() {
         clearView()
         settingAxisViewFrame()
@@ -182,20 +152,21 @@ public class AMBarChartView: UIView {
         showAnimation()
     }
     
+    // MARK:- Draw
     private func clearView() {
-        xLabels.forEach {$0.removeFromSuperview()}
+        xLabels.forEach { $0.removeFromSuperview() }
         xLabels.removeAll()
         
-        yLabels.forEach {$0.removeFromSuperview()}
+        yLabels.forEach { $0.removeFromSuperview() }
         yLabels.removeAll()
         
-        horizontalLineLayers.forEach {$0.removeFromSuperlayer()}
+        horizontalLineLayers.forEach { $0.removeFromSuperlayer() }
         horizontalLineLayers.removeAll()
         
-        barLayers.forEach {$0.removeFromSuperlayer()}
+        barLayers.forEach { $0.removeFromSuperlayer() }
         barLayers.removeAll()
         
-        graphLineLayers.forEach {$0.removeFromSuperlayer()}
+        graphLineLayers.forEach { $0.removeFromSuperlayer() }
         graphLineLayers.removeAll()
     }
     

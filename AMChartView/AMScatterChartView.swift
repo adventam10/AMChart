@@ -37,16 +37,16 @@ public enum AMSCPointType {
 
 public struct AMSCScatterValue {
     
-    public var xValue : CGFloat = 0
-    public var yValue : CGFloat = 0
+    public var xValue: CGFloat = 0
+    public var yValue: CGFloat = 0
     
-    public init(x :CGFloat, y :CGFloat) {
+    public init(x: CGFloat, y: CGFloat) {
         xValue = x
         yValue = y
     }
 }
 
-public protocol AMScatterChartViewDataSource:class {
+public protocol AMScatterChartViewDataSource: AnyObject {
     func numberOfSections(in scatterChartView: AMScatterChartView) -> Int
     func scatterChartView(_ scatterChartView: AMScatterChartView, numberOfRowsInSection section: Int) -> Int
     func scatterChartView(_ scatterChartView: AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMSCScatterValue
@@ -56,95 +56,62 @@ public protocol AMScatterChartViewDataSource:class {
 
 public class AMScatterChartView: UIView {
 
+    @IBInspectable public var yAxisMaxValue: CGFloat = 1000
+    @IBInspectable public var yAxisMinValue: CGFloat = 0
+    @IBInspectable public var numberOfYAxisLabel: Int = 6
+    @IBInspectable public var xAxisMaxValue: CGFloat = 1000
+    @IBInspectable public var xAxisMinValue: CGFloat = 0
+    @IBInspectable public var numberOfXAxisLabel: Int = 6
+    @IBInspectable public var yLabelWidth: CGFloat = 50.0
+    @IBInspectable public var xLabelHeight: CGFloat = 30.0
+    @IBInspectable public var axisColor: UIColor = .black
+    @IBInspectable public var axisWidth: CGFloat = 1.0
+    @IBInspectable public var yAxisTitleFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var xAxisTitleFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var xAxisTitleLabelHeight: CGFloat = 50.0
+    @IBInspectable public var yAxisTitleLabelHeight: CGFloat = 50.0
+    @IBInspectable public var yLabelsFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var xLabelsFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var yAxisTitleColor: UIColor = .black
+    @IBInspectable public var xAxisTitleColor: UIColor = .black
+    @IBInspectable public var yLabelsTextColor: UIColor = .black
+    @IBInspectable public var xLabelsTextColor: UIColor = .black
+    @IBInspectable public var yAxisTitle: String = "" {
+        didSet {
+            yAxisTitleLabel.text = yAxisTitle
+        }
+    }
+    @IBInspectable public var xAxisTitle: String = "" {
+        didSet {
+            xAxisTitleLabel.text = xAxisTitle
+        }
+    }
+    
+    weak public var dataSource: AMScatterChartViewDataSource?
+    public var yAxisDecimalFormat: AMSCDecimalFormat = .none
+    public var xAxisDecimalFormat: AMSCDecimalFormat = .none
+    public var animationDuration: CFTimeInterval = 0.6
+    
     override public var bounds: CGRect {
         didSet {
             reloadData()
         }
     }
     
-    private let space:CGFloat = 10
-    
-    private let pointRadius:CGFloat = 5
-    
-    weak public var dataSource : AMScatterChartViewDataSource?
-
-    @IBInspectable public var yAxisMaxValue:CGFloat = 1000
-    
-    @IBInspectable public var yAxisMinValue:CGFloat = 0
-    
-    @IBInspectable public var numberOfYAxisLabel:Int = 6
-    
-    @IBInspectable public var yAxisTitle:String = "" {
-        didSet {
-            yAxisTitleLabel.text = yAxisTitle
-        }
-    }
-    
-    @IBInspectable public var xAxisMaxValue:CGFloat = 1000
-    
-    @IBInspectable public var xAxisMinValue:CGFloat = 0
-    
-    @IBInspectable public var numberOfXAxisLabel:Int = 6
-    
-    @IBInspectable public var xAxisTitle:String = "" {
-        didSet {
-            xAxisTitleLabel.text = xAxisTitle
-        }
-    }
-    
-    @IBInspectable public var yLabelWidth:CGFloat = 50.0
-    
-    @IBInspectable public var xLabelHeight:CGFloat = 30.0
-    
-    @IBInspectable public var axisColor:UIColor = UIColor.black
-    
-    @IBInspectable public var axisWidth:CGFloat = 1.0
-    
-    @IBInspectable public var yAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var xAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var xAxisTitleLabelHeight:CGFloat = 50.0
-    
-    @IBInspectable public var yAxisTitleLabelHeight:CGFloat = 50.0
-    
-    @IBInspectable public var yLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var xLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var yAxisTitleColor:UIColor = UIColor.black
-    
-    @IBInspectable public var xAxisTitleColor:UIColor = UIColor.black
-    
-    @IBInspectable public var yLabelsTextColor:UIColor = UIColor.black
-    
-    @IBInspectable public var xLabelsTextColor:UIColor = UIColor.black
-    
-    public var yAxisDecimalFormat:AMSCDecimalFormat = .none
-    
-    public var xAxisDecimalFormat:AMSCDecimalFormat = .none
-    
-    public var animationDuration:CFTimeInterval = 0.6
-    
     private let xAxisView = UIView()
-    
     private let yAxisView = UIView()
+    private let xAxisTitleLabel = UILabel()
+    private let yAxisTitleLabel = UILabel()
+    private let space: CGFloat = 10
+    private let pointRadius: CGFloat = 5
     
     private var xLabels = [UILabel]()
-    
     private var yLabels = [UILabel]()
-    
     private var graphLayers = [CAShapeLayer]()
-    
-    private let xAxisTitleLabel = UILabel()
-    
-    private let yAxisTitleLabel = UILabel()
-    
     private var horizontalLineLayers = [CALayer]()
-    
     private var graphLayer = CALayer()
     
-    //MARK:Initialize
+    // MARK:- Initialize
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
         initView()
@@ -152,12 +119,12 @@ public class AMScatterChartView: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.clear
+        backgroundColor = .clear
         initView()
     }
     
     convenience init() {
-        self.init(frame: CGRect.zero)
+        self.init(frame: .zero)
     }
     
     private func initView() {
@@ -182,6 +149,7 @@ public class AMScatterChartView: UIView {
         reloadData()
     }
     
+    // MARK:- Reload
     public func reloadData() {
         clearView()
         settingAxisViewFrame()
@@ -214,6 +182,7 @@ public class AMScatterChartView: UIView {
         showAnimation()
     }
     
+    // MARK:- Draw
     private func clearView() {
         xLabels.forEach { $0.removeFromSuperview() }
         xLabels.removeAll()
@@ -224,7 +193,7 @@ public class AMScatterChartView: UIView {
         horizontalLineLayers.forEach { $0.removeFromSuperlayer() }
         horizontalLineLayers.removeAll()
         
-        graphLayers.forEach {$0.removeFromSuperlayer()}
+        graphLayers.forEach { $0.removeFromSuperlayer() }
         graphLayers.removeAll()
     }
     
@@ -375,7 +344,7 @@ public class AMScatterChartView: UIView {
             graphLayers.removeLast()
         }
         
-        graphLayers.forEach {$0.frame = graphLayer.bounds}
+        graphLayers.forEach { $0.frame = graphLayer.bounds }
     }
     
     private func prepareGraph(section: Int,

@@ -14,7 +14,7 @@ public enum AMRCDecimalFormat {
     case second
 }
 
-public protocol AMRadarChartViewDataSource: class {
+public protocol AMRadarChartViewDataSource: AnyObject {
     func numberOfSections(in radarChartView: AMRadarChartView) -> Int
     func numberOfRows(in radarChartView: AMRadarChartView) -> Int
     func radarChartView(_ radarChartView: AMRadarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
@@ -32,67 +32,44 @@ extension AMRadarChartViewDataSource {
 
 public class AMRadarChartView: UIView {
 
+    @IBInspectable public var axisMaxValue: CGFloat = 5.0
+    @IBInspectable public var axisMinValue: CGFloat = 0.0
+    @IBInspectable public var numberOfAxisLabel: Int = 6
+    @IBInspectable public var rowLabelWidth: CGFloat = 50.0
+    @IBInspectable public var rowLabelHeight: CGFloat = 30.0
+    @IBInspectable public var axisColor: UIColor = .black
+    @IBInspectable public var axisWidth: CGFloat = 1.0
+    @IBInspectable public var axisLabelsFont: UIFont = .systemFont(ofSize: 12)
+    @IBInspectable public var axisLabelsWidth: CGFloat = 50.0
+    @IBInspectable public var rowLabelsFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var axisLabelsTextColor: UIColor = .black
+    @IBInspectable public var rowLabelsTextColor: UIColor = .black
+    @IBInspectable public var isDottedLine: Bool = false
+    
+    weak public var dataSource: AMRadarChartViewDataSource?
+    public var axisDecimalFormat: AMRCDecimalFormat = .none
+    public var animationDuration: CFTimeInterval = 0.6
+    
     override public var bounds: CGRect {
         didSet {
             reloadData()
         }
     }
     
-    weak public var dataSource:AMRadarChartViewDataSource?
-    
-    @IBInspectable public var axisMaxValue:CGFloat = 5.0
-    
-    @IBInspectable public var axisMinValue:CGFloat = 0.0
-    
-    @IBInspectable public var numberOfAxisLabel:Int = 6
-    
-    @IBInspectable public var rowLabelWidth:CGFloat = 50.0
-    
-    @IBInspectable public var rowLabelHeight:CGFloat = 30.0
-    
-    @IBInspectable public var axisColor:UIColor = UIColor.black
-    
-    @IBInspectable public var axisWidth:CGFloat = 1.0
-    
-    @IBInspectable public var axisLabelsFont:UIFont = UIFont.systemFont(ofSize: 12)
-    
-    @IBInspectable public var axisLabelsWidth:CGFloat = 50.0
-    
-    @IBInspectable public var rowLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var axisLabelsTextColor:UIColor = UIColor.black
-    
-    @IBInspectable public var rowLabelsTextColor:UIColor = UIColor.black
-    
-    public var axisDecimalFormat : AMRCDecimalFormat = .none
-    
-    public var animationDuration:CFTimeInterval = 0.6
-    
-    @IBInspectable public var isDottedLine:Bool = false
-
-    private let space:CGFloat = 10
-    
-    private let borderLineWidth:CGFloat = 3.5
-    
+    private let space: CGFloat = 10
+    private let borderLineWidth: CGFloat = 3.5
     private let chartView = UIView()
-    
-    private var rowLabels = [UILabel]()
-    
-    private var axisLabels = [UILabel]()
-    
-    private var graphLayers = [CAShapeLayer]()
-    
-    private var radarChartLayer:CAShapeLayer?
-    
-    private var angleList = [Float]()
-    
-    private var animationPaths = [UIBezierPath]()
-    
     private let axisView = UIView()
-    
     private let graphView = UIView()
     
-    //MARK:Initialize
+    private var rowLabels = [UILabel]()
+    private var axisLabels = [UILabel]()
+    private var graphLayers = [CAShapeLayer]()
+    private var radarChartLayer:CAShapeLayer?
+    private var angleList = [Float]()
+    private var animationPaths = [UIBezierPath]()
+    
+    // MARK:- Initialize
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
         initView()
@@ -100,12 +77,12 @@ public class AMRadarChartView: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.clear
+        backgroundColor = .clear
         initView()
     }
     
     convenience init() {
-        self.init(frame: CGRect.zero)
+        self.init(frame: .zero)
     }
     
     private func initView() {
@@ -118,6 +95,7 @@ public class AMRadarChartView: UIView {
         reloadData()
     }
     
+    // MARK:- Draw
     private func settingChartViewFrame() {
         let length = (frame.height < frame.width) ? frame.height : frame.width
         
@@ -341,6 +319,19 @@ public class AMRadarChartView: UIView {
         animationPaths.removeAll()
     }
     
+    private func clearView() {
+        axisLabels.forEach { $0.removeFromSuperview() }
+        axisLabels.removeAll()
+        
+        rowLabels.forEach { $0.removeFromSuperview() }
+        rowLabels.removeAll()
+        
+        radarChartLayer?.removeFromSuperlayer()
+        radarChartLayer = nil
+        angleList.removeAll()
+    }
+    
+    // MARK:- Reload
     public func reloadData() {
         clearView()
         settingChartViewFrame()
@@ -387,20 +378,8 @@ public class AMRadarChartView: UIView {
     }
     
     public func redrawChart() {
-        graphLayers.forEach{$0.removeFromSuperlayer()}
+        graphLayers.forEach { $0.removeFromSuperlayer() }
         graphLayers.removeAll()
         reloadData()
-    }
-    
-    private func clearView() {
-        axisLabels.forEach{$0.removeFromSuperview()}
-        axisLabels.removeAll()
-        
-        rowLabels.forEach{$0.removeFromSuperview()}
-        rowLabels.removeAll()
-        
-        radarChartLayer?.removeFromSuperlayer()
-        radarChartLayer = nil
-        angleList.removeAll()
     }
 }

@@ -35,7 +35,7 @@ public enum AMLCPointType {
     case type9
 }
 
-public protocol AMLineChartViewDataSource:class {
+public protocol AMLineChartViewDataSource: AnyObject {
     func numberOfSections(in lineChartView: AMLineChartView) -> Int
     func numberOfRows(in lineChartView: AMLineChartView) -> Int
     func lineChartView(_ lineChartView: AMLineChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
@@ -46,89 +46,59 @@ public protocol AMLineChartViewDataSource:class {
 
 public class AMLineChartView: UIView {
     
+    @IBInspectable public var yAxisMaxValue: CGFloat = 1000
+    @IBInspectable public var yAxisMinValue: CGFloat = 0
+    @IBInspectable public var numberOfYAxisLabel: Int = 6
+    @IBInspectable public var yLabelWidth: CGFloat = 50.0
+    @IBInspectable public var xLabelHeight: CGFloat = 30.0
+    @IBInspectable public var axisColor: UIColor = .black
+    @IBInspectable public var axisWidth: CGFloat = 1.0
+    @IBInspectable public var yAxisTitleFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var xAxisTitleFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var xAxisTitleLabelHeight: CGFloat = 50.0
+    @IBInspectable public var yAxisTitleLabelHeight: CGFloat = 50.0
+    @IBInspectable public var yLabelsFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var xLabelsFont: UIFont = .systemFont(ofSize: 15)
+    @IBInspectable public var yAxisTitleColor: UIColor = .black
+    @IBInspectable public var xAxisTitleColor: UIColor = .black
+    @IBInspectable public var yLabelsTextColor: UIColor = .black
+    @IBInspectable public var xLabelsTextColor: UIColor = .black
+    @IBInspectable public var isHorizontalLine: Bool = false
+    @IBInspectable public var yAxisTitle: String = "" {
+        didSet {
+            yAxisTitleLabel.text = yAxisTitle
+        }
+    }
+    @IBInspectable public var xAxisTitle: String = "" {
+        didSet {
+            xAxisTitleLabel.text = xAxisTitle
+        }
+    }
+    
+    weak public var dataSource: AMLineChartViewDataSource?
+    public var yAxisDecimalFormat: AMLCDecimalFormat = .none
+    public var animationDuration: CFTimeInterval = 0.6
+    
     override public var bounds: CGRect {
         didSet {
             reloadData()
         }
     }
     
-    private let space:CGFloat = 10
-
-    private let pointRadius:CGFloat = 5
-    
-    weak public var dataSource : AMLineChartViewDataSource?
-    
-    @IBInspectable public var yAxisMaxValue:CGFloat = 1000
-    
-    @IBInspectable public var yAxisMinValue:CGFloat = 0
-    
-    @IBInspectable public var numberOfYAxisLabel:Int = 6
-    
-    @IBInspectable public var yAxisTitle:String = "" {
-        didSet {
-            yAxisTitleLabel.text = yAxisTitle
-        }
-    }
-    
-    @IBInspectable public var xAxisTitle:String = "" {
-        didSet {
-            xAxisTitleLabel.text = xAxisTitle
-        }
-    }
-    
-    @IBInspectable public var yLabelWidth:CGFloat = 50.0
-    
-    @IBInspectable public var xLabelHeight:CGFloat = 30.0
-    
-    @IBInspectable public var axisColor:UIColor = UIColor.black
-    
-    @IBInspectable public var axisWidth:CGFloat = 1.0
-    
-    @IBInspectable public var yAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var xAxisTitleFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var xAxisTitleLabelHeight:CGFloat = 50.0
-    
-    @IBInspectable public var yAxisTitleLabelHeight:CGFloat = 50.0
-    
-    @IBInspectable public var yLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var xLabelsFont:UIFont = UIFont.systemFont(ofSize: 15)
-    
-    @IBInspectable public var yAxisTitleColor:UIColor = UIColor.black
-    
-    @IBInspectable public var xAxisTitleColor:UIColor = UIColor.black
-    
-    @IBInspectable public var yLabelsTextColor:UIColor = UIColor.black
-    
-    @IBInspectable public var xLabelsTextColor:UIColor = UIColor.black
-    
-    public var yAxisDecimalFormat:AMLCDecimalFormat = .none
-    
-    public var animationDuration:CFTimeInterval = 0.6
-    
-    @IBInspectable public var isHorizontalLine:Bool = false
-    
+    private let space: CGFloat = 10
+    private let pointRadius: CGFloat = 5
     private let xAxisView = UIView()
-
     private let yAxisView = UIView()
-    
-    private var xLabels = [UILabel]()
-    
-    private var yLabels = [UILabel]()
-    
-    private var graphLayers = [CAShapeLayer]()
-
     private let xAxisTitleLabel = UILabel()
-
     private let yAxisTitleLabel = UILabel()
     
+    private var xLabels = [UILabel]()
+    private var yLabels = [UILabel]()
+    private var graphLayers = [CAShapeLayer]()
     private var horizontalLineLayers = [CALayer]()
-    
     private var animationPaths = [UIBezierPath]()
     
-    //MARK:Initialize
+    // MARK:- Initialize
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder:aDecoder)
         initView()
@@ -136,12 +106,12 @@ public class AMLineChartView: UIView {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.clear
+        backgroundColor = .clear
         initView()
     }
     
     convenience init() {
-        self.init(frame: CGRect.zero)
+        self.init(frame: .zero)
     }
     
     private func initView() {
@@ -164,6 +134,7 @@ public class AMLineChartView: UIView {
         reloadData()
     }
     
+    // MARK:- Reload
     public func reloadData() {
         clearView()
         settingAxisViewFrame()
@@ -205,19 +176,20 @@ public class AMLineChartView: UIView {
     }
     
     public func redrawChart() {
-        graphLayers.forEach{$0.removeFromSuperlayer()}
+        graphLayers.forEach { $0.removeFromSuperlayer() }
         graphLayers.removeAll()
         reloadData()
     }
     
+    // MARK:- Draw
     private func clearView() {
-        xLabels.forEach{$0.removeFromSuperview()}
+        xLabels.forEach { $0.removeFromSuperview() }
         xLabels.removeAll()
         
-        yLabels.forEach{$0.removeFromSuperview()}
+        yLabels.forEach { $0.removeFromSuperview() }
         yLabels.removeAll()
         
-        horizontalLineLayers.forEach{$0.removeFromSuperlayer()}
+        horizontalLineLayers.forEach { $0.removeFromSuperlayer() }
         horizontalLineLayers.removeAll()
     }
     
@@ -348,10 +320,12 @@ public class AMLineChartView: UIView {
             graphLayers.removeLast()
         }
         
-        graphLayers.forEach{$0.frame = CGRect(x: yAxisView.frame.origin.x + axisWidth,
-                                              y: yAxisView.frame.origin.y,
-                                              width: xAxisView.frame.width - axisWidth,
-                                              height: yAxisView.frame.height)}
+        graphLayers.forEach {
+            $0.frame = CGRect(x: yAxisView.frame.origin.x + axisWidth,
+                              y: yAxisView.frame.origin.y,
+                              width: xAxisView.frame.width - axisWidth,
+                              height: yAxisView.frame.height)
+        }
     }
     
     private func prepareLineGraph(section: Int,

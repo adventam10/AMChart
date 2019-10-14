@@ -7,23 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E407B10235483F30096FA4A /* AMLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E407B0B235483F30096FA4A /* AMLineChartView.swift */; };
+		0E407B11235483F30096FA4A /* AMPieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E407B0C235483F30096FA4A /* AMPieChartView.swift */; };
+		0E407B12235483F30096FA4A /* AMScatterChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E407B0D235483F30096FA4A /* AMScatterChartView.swift */; };
+		0E407B13235483F30096FA4A /* AMBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E407B0E235483F30096FA4A /* AMBarChartView.swift */; };
+		0E407B14235483F30096FA4A /* AMRadarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E407B0F235483F30096FA4A /* AMRadarChartView.swift */; };
 		0E4753A6201F7412002EA382 /* AMChart.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E4753A4201F7412002EA382 /* AMChart.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0E4753B2201F744B002EA382 /* AMBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4753AD201F744B002EA382 /* AMBarChartView.swift */; };
-		0E4753B3201F744B002EA382 /* AMLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4753AE201F744B002EA382 /* AMLineChartView.swift */; };
-		0E4753B4201F744B002EA382 /* AMPieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4753AF201F744B002EA382 /* AMPieChartView.swift */; };
-		0E4753B5201F744B002EA382 /* AMRadarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4753B0201F744B002EA382 /* AMRadarChartView.swift */; };
-		0E4753B6201F744B002EA382 /* AMScatterChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4753B1201F744B002EA382 /* AMScatterChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E407B0B235483F30096FA4A /* AMLineChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMLineChartView.swift; sourceTree = "<group>"; };
+		0E407B0C235483F30096FA4A /* AMPieChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPieChartView.swift; sourceTree = "<group>"; };
+		0E407B0D235483F30096FA4A /* AMScatterChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMScatterChartView.swift; sourceTree = "<group>"; };
+		0E407B0E235483F30096FA4A /* AMBarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMBarChartView.swift; sourceTree = "<group>"; };
+		0E407B0F235483F30096FA4A /* AMRadarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMRadarChartView.swift; sourceTree = "<group>"; };
 		0E4753A1201F7412002EA382 /* AMChart.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AMChart.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0E4753A4201F7412002EA382 /* AMChart.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AMChart.h; sourceTree = "<group>"; };
 		0E4753A5201F7412002EA382 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0E4753AD201F744B002EA382 /* AMBarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMBarChartView.swift; sourceTree = "<group>"; };
-		0E4753AE201F744B002EA382 /* AMLineChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMLineChartView.swift; sourceTree = "<group>"; };
-		0E4753AF201F744B002EA382 /* AMPieChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPieChartView.swift; sourceTree = "<group>"; };
-		0E4753B0201F744B002EA382 /* AMRadarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMRadarChartView.swift; sourceTree = "<group>"; };
-		0E4753B1201F744B002EA382 /* AMScatterChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMScatterChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,10 +37,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E407B0A235483F30096FA4A /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				0E407B0B235483F30096FA4A /* AMLineChartView.swift */,
+				0E407B0C235483F30096FA4A /* AMPieChartView.swift */,
+				0E407B0D235483F30096FA4A /* AMScatterChartView.swift */,
+				0E407B0E235483F30096FA4A /* AMBarChartView.swift */,
+				0E407B0F235483F30096FA4A /* AMRadarChartView.swift */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
 		0E475397201F7412002EA382 = {
 			isa = PBXGroup;
 			children = (
-				0E4753AC201F744B002EA382 /* AMChartView */,
+				0E407B0A235483F30096FA4A /* Source */,
 				0E4753A3201F7412002EA382 /* AMChart */,
 				0E4753A2201F7412002EA382 /* Products */,
 			);
@@ -61,18 +73,6 @@
 				0E4753A5201F7412002EA382 /* Info.plist */,
 			);
 			path = AMChart;
-			sourceTree = "<group>";
-		};
-		0E4753AC201F744B002EA382 /* AMChartView */ = {
-			isa = PBXGroup;
-			children = (
-				0E4753AD201F744B002EA382 /* AMBarChartView.swift */,
-				0E4753AE201F744B002EA382 /* AMLineChartView.swift */,
-				0E4753AF201F744B002EA382 /* AMPieChartView.swift */,
-				0E4753B0201F744B002EA382 /* AMRadarChartView.swift */,
-				0E4753B1201F744B002EA382 /* AMScatterChartView.swift */,
-			);
-			path = AMChartView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -155,11 +155,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0E4753B2201F744B002EA382 /* AMBarChartView.swift in Sources */,
-				0E4753B6201F744B002EA382 /* AMScatterChartView.swift in Sources */,
-				0E4753B4201F744B002EA382 /* AMPieChartView.swift in Sources */,
-				0E4753B5201F744B002EA382 /* AMRadarChartView.swift in Sources */,
-				0E4753B3201F744B002EA382 /* AMLineChartView.swift in Sources */,
+				0E407B14235483F30096FA4A /* AMRadarChartView.swift in Sources */,
+				0E407B12235483F30096FA4A /* AMScatterChartView.swift in Sources */,
+				0E407B11235483F30096FA4A /* AMPieChartView.swift in Sources */,
+				0E407B10235483F30096FA4A /* AMLineChartView.swift in Sources */,
+				0E407B13235483F30096FA4A /* AMBarChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

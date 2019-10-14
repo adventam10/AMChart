@@ -4,6 +4,7 @@
 ![Pod License](https://img.shields.io/cocoapods/l/AMChart.svg?style=flat)
 [![Pod Version](https://img.shields.io/cocoapods/v/AMChart.svg?style=flat)](http://cocoapods.org/pods/AMChart)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 
 ## Demo
 
@@ -262,6 +263,7 @@ public var animationDuration: CFTimeInterval = 0.6
 ### CocoaPods
 
 Add this to your Podfile.
+
 ```ogdl
 pod 'AMChart'
 ```

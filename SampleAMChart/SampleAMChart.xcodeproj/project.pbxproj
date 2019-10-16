@@ -18,6 +18,7 @@
 		0E9A094220038FA800DD65DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0E9A094120038FA800DD65DB /* Assets.xcassets */; };
 		0E9A094520038FA800DD65DB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0E9A094320038FA800DD65DB /* LaunchScreen.storyboard */; };
 		0E9F7CC0235767A200F3ED4C /* AMChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9F7CBF235767A200F3ED4C /* AMChartData.swift */; };
+		0E9F7CC223576A5A00F3ED4C /* AMChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E9F7CC123576A5A00F3ED4C /* AMChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		0E9A094420038FA800DD65DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0E9A094620038FA900DD65DB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0E9F7CBF235767A200F3ED4C /* AMChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMChartData.swift; sourceTree = "<group>"; };
+		0E9F7CC123576A5A00F3ED4C /* AMChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +53,7 @@
 			isa = PBXGroup;
 			children = (
 				0E9F7CBF235767A200F3ED4C /* AMChartData.swift */,
+				0E9F7CC123576A5A00F3ED4C /* AMChartView.swift */,
 				0E407B00235483D20096FA4A /* AMLineChartView.swift */,
 				0E407B01235483D20096FA4A /* AMPieChartView.swift */,
 				0E407B02235483D20096FA4A /* AMScatterChartView.swift */,
@@ -179,6 +182,7 @@
 				0E407B05235483D20096FA4A /* AMLineChartView.swift in Sources */,
 				0E47538A201F73EC002EA382 /* AppDelegate.swift in Sources */,
 				0E9F7CC0235767A200F3ED4C /* AMChartData.swift in Sources */,
+				0E9F7CC223576A5A00F3ED4C /* AMChartView.swift in Sources */,
 				0E407B09235483D20096FA4A /* AMRadarChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

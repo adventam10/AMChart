@@ -16,7 +16,7 @@ public protocol AMScatterChartViewDataSource: AnyObject {
     func scatterChartView(_ scatterChartView: AMScatterChartView, pointTypeForSection section: Int) -> AMPointType
 }
 
-public class AMScatterChartView: UIView {
+public class AMScatterChartView: AMChartView {
 
     @IBInspectable public var yAxisMaxValue: CGFloat = 1000
     @IBInspectable public var yAxisMinValue: CGFloat = 0
@@ -54,12 +54,6 @@ public class AMScatterChartView: UIView {
     public var xAxisDecimalFormat: AMDecimalFormat = .none
     public var animationDuration: CFTimeInterval = 0.6
     
-    override public var bounds: CGRect {
-        didSet {
-            reloadData()
-        }
-    }
-    
     private let xAxisView = UIView()
     private let yAxisView = UIView()
     private let xAxisTitleLabel = UILabel()
@@ -73,23 +67,7 @@ public class AMScatterChartView: UIView {
     private var horizontalLineLayers = [CALayer]()
     private var graphLayer = CALayer()
     
-    // MARK:- Initialize
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder:aDecoder)
-        initView()
-    }
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        initView()
-    }
-    
-    convenience init() {
-        self.init(frame: .zero)
-    }
-    
-    private func initView() {
+    override public func initView() {
         // Set Y axis
         addSubview(yAxisView)
         yAxisTitleLabel.textAlignment = .right
@@ -107,12 +85,8 @@ public class AMScatterChartView: UIView {
         layer.addSublayer(graphLayer)
     }
     
-    override public func draw(_ rect: CGRect) {
-        reloadData()
-    }
-    
     // MARK:- Reload
-    public func reloadData() {
+    override public func reloadData() {
         clearView()
         settingAxisViewFrame()
         settingAxisTitleLayout()

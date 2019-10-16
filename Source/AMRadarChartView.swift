@@ -24,7 +24,7 @@ extension AMRadarChartViewDataSource {
     }
 }
 
-public class AMRadarChartView: UIView {
+public class AMRadarChartView: AMChartView {
 
     @IBInspectable public var axisMaxValue: CGFloat = 5.0
     @IBInspectable public var axisMinValue: CGFloat = 0.0
@@ -44,12 +44,6 @@ public class AMRadarChartView: UIView {
     public var axisDecimalFormat: AMDecimalFormat = .none
     public var animationDuration: CFTimeInterval = 0.6
     
-    override public var bounds: CGRect {
-        didSet {
-            reloadData()
-        }
-    }
-    
     private let space: CGFloat = 10
     private let borderLineWidth: CGFloat = 3.5
     private let chartView = UIView()
@@ -63,30 +57,10 @@ public class AMRadarChartView: UIView {
     private var angleList = [Float]()
     private var animationPaths = [UIBezierPath]()
     
-    // MARK:- Initialize
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder:aDecoder)
-        initView()
-    }
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        initView()
-    }
-    
-    convenience init() {
-        self.init(frame: .zero)
-    }
-    
-    private func initView() {
+    override public func initView() {
         addSubview(chartView)
         chartView.addSubview(axisView)
         chartView.addSubview(graphView)
-    }
-    
-    override public func draw(_ rect: CGRect) {
-        reloadData()
     }
     
     // MARK:- Draw
@@ -315,7 +289,7 @@ public class AMRadarChartView: UIView {
     }
     
     // MARK:- Reload
-    public func reloadData() {
+    override public func reloadData() {
         clearView()
         settingChartViewFrame()
         guard let dataSource = dataSource else {

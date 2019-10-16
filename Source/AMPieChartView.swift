@@ -22,7 +22,7 @@ public protocol AMPieChartViewDelegate: AnyObject {
     func pieChartView(_ pieChartView: AMPieChartView, didDeSelectSection section: Int)
 }
 
-public class AMPieChartView: UIView {
+public class AMPieChartView: AMChartView {
 
     class FanLayer: CAShapeLayer {
         var index: Int = 0
@@ -118,12 +118,6 @@ public class AMPieChartView: UIView {
             centerLabel.attributedText = centerLabelAttribetedText
         }
     }
-
-    override public var bounds: CGRect {
-        didSet {
-            reloadData()
-        }
-    }
     
     private let chartView = UIView()
     private let animationChartView = UIView()
@@ -135,23 +129,7 @@ public class AMPieChartView: UIView {
     private var animationStartAngles = [Float]()
     private var animationEndAngles = [Float]()
     
-    // MARK:- Initialize
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder:aDecoder)
-        initView()
-    }
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        initView()
-    }
-    
-    convenience init() {
-        self.init(frame: .zero)
-    }
-    
-    private func initView() {
+    override public func initView() {
         addSubview(animationChartView)
         addSubview(chartView)
         
@@ -164,13 +142,9 @@ public class AMPieChartView: UIView {
         centerLabel.numberOfLines = 0
         addSubview(centerLabel)
     }
-    
-    override public func draw(_ rect: CGRect) {
-        reloadData()
-    }
-    
+        
     // MARK:- Reload
-    public func reloadData() {
+    override public func reloadData() {
         selectedIndex = AMPCDeSelectIndex
         settingChartViewFrame()
         guard let dataSource = dataSource else {

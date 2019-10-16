@@ -17,7 +17,7 @@ public protocol AMLineChartViewDataSource: AnyObject {
     func lineChartView(_ lineChartView: AMLineChartView, pointTypeForSection section: Int) -> AMPointType
 }
 
-public class AMLineChartView: UIView {
+public class AMLineChartView: AMChartView {
     
     @IBInspectable public var yAxisMaxValue: CGFloat = 1000
     @IBInspectable public var yAxisMinValue: CGFloat = 0
@@ -52,12 +52,6 @@ public class AMLineChartView: UIView {
     public var yAxisDecimalFormat: AMDecimalFormat = .none
     public var animationDuration: CFTimeInterval = 0.6
     
-    override public var bounds: CGRect {
-        didSet {
-            reloadData()
-        }
-    }
-    
     private let space: CGFloat = 10
     private let pointRadius: CGFloat = 5
     private let xAxisView = UIView()
@@ -71,23 +65,7 @@ public class AMLineChartView: UIView {
     private var horizontalLineLayers = [CALayer]()
     private var animationPaths = [UIBezierPath]()
     
-    // MARK:- Initialize
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder:aDecoder)
-        initView()
-    }
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        initView()
-    }
-    
-    convenience init() {
-        self.init(frame: .zero)
-    }
-    
-    private func initView() {
+    override public func initView() {
         // Set Y axis
         addSubview(yAxisView)
         yAxisTitleLabel.textAlignment = .right
@@ -103,12 +81,8 @@ public class AMLineChartView: UIView {
         addSubview(xAxisTitleLabel)
     }
     
-    override public func draw(_ rect: CGRect) {
-        reloadData()
-    }
-    
     // MARK:- Reload
-    public func reloadData() {
+    override public func reloadData() {
         clearView()
         settingAxisViewFrame()
         settingAxisTitleLayout()

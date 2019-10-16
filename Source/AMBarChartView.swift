@@ -16,7 +16,7 @@ public protocol AMBarChartViewDataSource: AnyObject {
     func barChartView(_ barChartView: AMBarChartView, titleForXlabelInSection section: Int) -> String
 }
 
-public class AMBarChartView: UIView {
+public class AMBarChartView: AMChartView {
     
     @IBInspectable public var yAxisMaxValue: CGFloat = 1000
     @IBInspectable public var yAxisMinValue: CGFloat = 0
@@ -51,13 +51,7 @@ public class AMBarChartView: UIView {
     weak public var dataSource: AMBarChartViewDataSource?
     public var yAxisDecimalFormat: AMDecimalFormat = .none
     public var animationDuration: CFTimeInterval = 0.6
-    
-    override public var bounds: CGRect {
-        didSet {
-            reloadData()
-        }
-    }
-    
+        
     private let space: CGFloat = 10
     private let xAxisView = UIView()
     private let yAxisView = UIView()
@@ -70,23 +64,7 @@ public class AMBarChartView: UIView {
     private var graphLineLayers = [CAShapeLayer]()
     private var graphLineLayer = CALayer()
     
-    // MARK:- Initialize
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder:aDecoder)
-        initView()
-    }
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        initView()
-    }
-    
-    convenience init() {
-        self.init(frame: .zero)
-    }
-    
-    private func initView() {
+    override public func initView() {
         // Set Y axis
         addSubview(yAxisView)
         yAxisTitleLabel.textAlignment = .right
@@ -105,12 +83,8 @@ public class AMBarChartView: UIView {
         layer.addSublayer(graphLineLayer)
     }
     
-    override public func draw(_ rect: CGRect) {
-        reloadData()
-    }
-    
     // MARK:- Reload
-    public func reloadData() {
+    override public func reloadData() {
         clearView()
         settingAxisViewFrame()
         settingAxisTitleLayout()

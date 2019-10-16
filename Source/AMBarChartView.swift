@@ -8,12 +8,6 @@
 
 import UIKit
 
-public enum AMBCDecimalFormat {
-    case none
-    case first
-    case second
-}
-
 public protocol AMBarChartViewDataSource: AnyObject {
     func numberOfSections(in barChartView: AMBarChartView) -> Int
     func barChartView(_ barChartView: AMBarChartView, numberOfRowsInSection section: Int) -> Int
@@ -55,7 +49,7 @@ public class AMBarChartView: UIView {
     }
     
     weak public var dataSource: AMBarChartViewDataSource?
-    public var yAxisDecimalFormat: AMBCDecimalFormat = .none
+    public var yAxisDecimalFormat: AMDecimalFormat = .none
     public var animationDuration: CFTimeInterval = 0.6
     
     override public var bounds: CGRect {
@@ -240,19 +234,7 @@ public class AMBarChartView: UIView {
             yLabel.font = yLabelsFont
             yLabel.textColor = yLabelsTextColor
             addSubview(yLabel)
-            
-            switch yAxisDecimalFormat {
-            case .none:
-                yLabel.text = NSString(format: "%.0f", value) as String
-            case .first:
-                yLabel.text = NSString(format: "%.1f", value) as String
-            case .second:
-                yLabel.text = NSString(format: "%.2f", value) as String
-            }
-            
-            if isHorizontalLine {
-                prepareGraphLineLayers(positionY:y + height/2)
-            }
+            yLabel.text = yAxisDecimalFormat.formattedValue(value)
             y -= height + space
             value += valueCount
         }

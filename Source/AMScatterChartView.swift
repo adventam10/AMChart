@@ -8,50 +8,12 @@
 
 import UIKit
 
-public enum AMSCDecimalFormat {
-    case none
-    case first
-    case second
-}
-
-public enum AMSCPointType {
-    /// circle（not filled）
-    case type1
-    /// circle（filled）
-    case type2
-    /// square（not filled）
-    case type3
-    /// square（filled）
-    case type4
-    /// triangle（not filled）
-    case type5
-    /// triangle（filled）
-    case type6
-    /// diamond（not filled）
-    case type7
-    /// diamond（filled）
-    case type8
-    /// x mark
-    case type9
-}
-
-public struct AMSCScatterValue {
-    
-    public var xValue: CGFloat = 0
-    public var yValue: CGFloat = 0
-    
-    public init(x: CGFloat, y: CGFloat) {
-        xValue = x
-        yValue = y
-    }
-}
-
 public protocol AMScatterChartViewDataSource: AnyObject {
     func numberOfSections(in scatterChartView: AMScatterChartView) -> Int
     func scatterChartView(_ scatterChartView: AMScatterChartView, numberOfRowsInSection section: Int) -> Int
-    func scatterChartView(_ scatterChartView: AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMSCScatterValue
+    func scatterChartView(_ scatterChartView: AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMScatterValue
     func scatterChartView(_ scatterChartView: AMScatterChartView, colorForSection section: Int) -> UIColor
-    func scatterChartView(_ scatterChartView: AMScatterChartView, pointTypeForSection section: Int) -> AMSCPointType
+    func scatterChartView(_ scatterChartView: AMScatterChartView, pointTypeForSection section: Int) -> AMPointType
 }
 
 public class AMScatterChartView: UIView {
@@ -88,8 +50,8 @@ public class AMScatterChartView: UIView {
     }
     
     weak public var dataSource: AMScatterChartViewDataSource?
-    public var yAxisDecimalFormat: AMSCDecimalFormat = .none
-    public var xAxisDecimalFormat: AMSCDecimalFormat = .none
+    public var yAxisDecimalFormat: AMDecimalFormat = .none
+    public var xAxisDecimalFormat: AMDecimalFormat = .none
     public var animationDuration: CFTimeInterval = 0.6
     
     override public var bounds: CGRect {
@@ -165,7 +127,7 @@ public class AMScatterChartView: UIView {
         prepareGraphLayers(sections:sections)
         
         for section in 0..<sections {
-            var values = [AMSCScatterValue]()
+            var values = [AMScatterValue]()
             let rows = dataSource.scatterChartView(self, numberOfRowsInSection: section)
             for row in 0..<rows {
                 let indexPath = IndexPath(row:row, section: section)
@@ -263,15 +225,7 @@ public class AMScatterChartView: UIView {
             yLabel.font = yLabelsFont
             yLabel.textColor = yLabelsTextColor
             addSubview(yLabel)
-            
-            switch yAxisDecimalFormat {
-            case .none:
-                yLabel.text = NSString(format: "%.0f", value) as String
-            case .first:
-                yLabel.text = NSString(format: "%.1f", value) as String
-            case .second:
-                yLabel.text = NSString(format: "%.2f", value) as String
-            }
+            yLabel.text = yAxisDecimalFormat.formattedValue(value)
             
             y -= height + space
             value += valueCount
@@ -305,16 +259,7 @@ public class AMScatterChartView: UIView {
             xLabel.font = xLabelsFont
             xLabel.textColor = xLabelsTextColor
             addSubview(xLabel)
-            
-            switch xAxisDecimalFormat {
-            case .none:
-                xLabel.text = NSString(format: "%.0f", value) as String
-            case .first:
-                xLabel.text = NSString(format: "%.1f", value) as String
-            case .second:
-                xLabel.text = NSString(format: "%.2f", value) as String
-            }
-            
+            xLabel.text = xAxisDecimalFormat.formattedValue(value)
             x += width + space
             value += valueCount
         }
@@ -349,8 +294,8 @@ public class AMScatterChartView: UIView {
     
     private func prepareGraph(section: Int,
                               color: UIColor,
-                              values: [AMSCScatterValue],
-                              pointType: AMSCPointType) {
+                              values: [AMScatterValue],
+                              pointType: AMPointType) {
         
         let graphLayer = graphLayers[section]
         graphLayer.strokeColor = color.cgColor
@@ -383,7 +328,7 @@ public class AMScatterChartView: UIView {
     }
     
     private func createPointPath(centerPoint: CGPoint,
-                                 pointType: AMSCPointType) -> UIBezierPath {
+                                 pointType: AMPointType) -> UIBezierPath {
         if pointType == .type1 || pointType == .type2 {
             return UIBezierPath(ovalIn: CGRect(x: centerPoint.x - pointRadius,
                                                y: centerPoint.y - pointRadius,

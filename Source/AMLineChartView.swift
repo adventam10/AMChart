@@ -8,40 +8,13 @@
 
 import UIKit
 
-public enum AMLCDecimalFormat {
-    case none
-    case first
-    case second
-}
-
-public enum AMLCPointType {
-    /// circle（not filled）
-    case type1
-    /// circle（filled）
-    case type2
-    /// square（not filled）
-    case type3
-    /// square（filled）
-    case type4
-    /// triangle（not filled）
-    case type5
-    /// triangle（filled）
-    case type6
-    /// diamond（not filled）
-    case type7
-    /// diamond（filled）
-    case type8
-    /// x mark
-    case type9
-}
-
 public protocol AMLineChartViewDataSource: AnyObject {
     func numberOfSections(in lineChartView: AMLineChartView) -> Int
     func numberOfRows(in lineChartView: AMLineChartView) -> Int
     func lineChartView(_ lineChartView: AMLineChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
     func lineChartView(_ lineChartView: AMLineChartView, colorForSection section: Int) -> UIColor
     func lineChartView(_ lineChartView: AMLineChartView, titleForXlabelInRow row: Int) -> String
-    func lineChartView(_ lineChartView: AMLineChartView, pointTypeForSection section: Int) -> AMLCPointType
+    func lineChartView(_ lineChartView: AMLineChartView, pointTypeForSection section: Int) -> AMPointType
 }
 
 public class AMLineChartView: UIView {
@@ -76,7 +49,7 @@ public class AMLineChartView: UIView {
     }
     
     weak public var dataSource: AMLineChartViewDataSource?
-    public var yAxisDecimalFormat: AMLCDecimalFormat = .none
+    public var yAxisDecimalFormat: AMDecimalFormat = .none
     public var animationDuration: CFTimeInterval = 0.6
     
     override public var bounds: CGRect {
@@ -257,15 +230,7 @@ public class AMLineChartView: UIView {
             yLabel.font = yLabelsFont
             yLabel.textColor = yLabelsTextColor
             addSubview(yLabel)
-            
-            switch yAxisDecimalFormat {
-            case .none:
-                yLabel.text = NSString(format: "%.0f", value) as String
-            case .first:
-                yLabel.text = NSString(format: "%.1f", value) as String
-            case .second:
-                yLabel.text = NSString(format: "%.2f", value) as String
-            }
+            yLabel.text = yAxisDecimalFormat.formattedValue(value)
             
             if isHorizontalLine {
                 prepareGraphLineLayers(positionY:y + height/2)
@@ -331,7 +296,7 @@ public class AMLineChartView: UIView {
     private func prepareLineGraph(section: Int,
                                   color: UIColor,
                                   values: [CGFloat],
-                                  pointType: AMLCPointType) {
+                                  pointType: AMPointType) {
         let graphLayer = graphLayers[section]
         graphLayer.strokeColor = color.cgColor
         
@@ -369,7 +334,7 @@ public class AMLineChartView: UIView {
     
     private func createPointPath(positionX: CGFloat,
                                   positionY: CGFloat,
-                                  pointType: AMLCPointType) -> UIBezierPath {
+                                  pointType: AMPointType) -> UIBezierPath {
         if pointType == .type1 || pointType == .type2 {
             return UIBezierPath(ovalIn: CGRect(x: positionX - pointRadius,
                                                     y: positionY - pointRadius,

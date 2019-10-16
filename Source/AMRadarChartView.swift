@@ -8,12 +8,6 @@
 
 import UIKit
 
-public enum AMRCDecimalFormat {
-    case none
-    case first
-    case second
-}
-
 public protocol AMRadarChartViewDataSource: AnyObject {
     func numberOfSections(in radarChartView: AMRadarChartView) -> Int
     func numberOfRows(in radarChartView: AMRadarChartView) -> Int
@@ -47,7 +41,7 @@ public class AMRadarChartView: UIView {
     @IBInspectable public var isDottedLine: Bool = false
     
     weak public var dataSource: AMRadarChartViewDataSource?
-    public var axisDecimalFormat: AMRCDecimalFormat = .none
+    public var axisDecimalFormat: AMDecimalFormat = .none
     public var animationDuration: CFTimeInterval = 0.6
     
     override public var bounds: CGRect {
@@ -244,18 +238,7 @@ public class AMRadarChartView: UIView {
             label.textAlignment = .right
             label.font = axisLabelsFont
             label.textColor = axisLabelsTextColor
-            
-            var text = ""
-            switch axisDecimalFormat {
-            case .none:
-                text = NSString(format: "%.0f", value) as String
-            case .first:
-                text = NSString(format: "%.1f", value) as String
-            case .second:
-                text = NSString(format: "%.2f", value) as String
-            }
-            
-            label.text = text
+            label.text = axisDecimalFormat.formattedValue(value)
             axisLabels.append(label)
             chartView.addSubview(label)
             drawRadius -= radius/CGFloat(numberOfAxisLabel - 1)

@@ -19,7 +19,7 @@ class ViewController: UIViewController {
     var radarDataList = [[CGFloat]]()
     var barDataList = [[CGFloat]]()
     var pieDataList = [CGFloat]()
-    var scatterDataList = [[AMSCScatterValue]]()
+    var scatterDataList = [[AMScatterValue]]()
     var lineDataList = [[CGFloat]]()
     var radarRowNum:Int = 0
     let radarAxisNum:UInt32 = 6
@@ -28,9 +28,9 @@ class ViewController: UIViewController {
     
     let titles = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
     
-    let linePointTypes:[AMLCPointType] = [.type1, .type2, .type3, .type4, .type5, .type6, .type7, .type8, .type9]
+    let linePointTypes:[AMPointType] = [.type1, .type2, .type3, .type4, .type5, .type6, .type7, .type8, .type9]
     
-    let scatterPointTypes:[AMSCPointType] = [.type1, .type2, .type3, .type4, .type5, .type6, .type7, .type8, .type9]
+    let scatterPointTypes:[AMPointType] = [.type1, .type2, .type3, .type4, .type5, .type6, .type7, .type8, .type9]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -122,12 +122,12 @@ class ViewController: UIViewController {
         let scatterSectionNum = Int(arc4random_uniform(10)) + 1
         scatterDataList.removeAll()
         for _ in 0..<scatterSectionNum {
-            var values = [AMSCScatterValue]()
+            var values = [AMScatterValue]()
             let scatterRownNum = Int(arc4random_uniform(100)) + 1
             for _ in 0..<scatterRownNum {
                 let valueX = CGFloat(arc4random_uniform(1000))
                 let valueY = CGFloat(arc4random_uniform(1000))
-                values.append(AMSCScatterValue(x:valueX, y: valueY))
+                values.append(AMScatterValue(x:valueX, y: valueY))
             }
             scatterDataList.append(values)
         }
@@ -175,7 +175,7 @@ extension ViewController: AMScatterChartViewDataSource {
         return scatterDataList[section].count
     }
     
-    func scatterChartView(_ scatterChartView:AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMSCScatterValue {
+    func scatterChartView(_ scatterChartView:AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMScatterValue {
         return scatterDataList[indexPath.section][indexPath.row]
     }
     
@@ -186,7 +186,7 @@ extension ViewController: AMScatterChartViewDataSource {
         return UIColor(red: r, green: g, blue: b, alpha: 1.0)
     }
     
-    func scatterChartView(_ scatterChartView:AMScatterChartView, pointTypeForSection section: Int) -> AMSCPointType {
+    func scatterChartView(_ scatterChartView:AMScatterChartView, pointTypeForSection section: Int) -> AMPointType {
         return scatterPointTypes[Int(arc4random_uniform(9))]
     }
 }
@@ -232,7 +232,7 @@ extension ViewController: AMLineChartViewDataSource {
         return titles[row]
     }
     
-    func lineChartView(_ lineChartView:AMLineChartView, pointTypeForSection section: Int) -> AMLCPointType {
+    func lineChartView(_ lineChartView:AMLineChartView, pointTypeForSection section: Int) -> AMPointType {
         return linePointTypes[Int(arc4random_uniform(9))]
     }
 }

@@ -8,9 +8,6 @@
 
 import UIKit
 
-private let AMPCSpace: CGFloat = 10
-private let AMPCDeSelectIndex: Int = -1
-
 public protocol AMPieChartViewDataSource: AnyObject {
     func numberOfSections(in pieChartView: AMPieChartView) -> Int
     func pieChartView(_ pieChartView: AMPieChartView, valueForSection section: Int) -> CGFloat
@@ -22,8 +19,11 @@ public protocol AMPieChartViewDelegate: AnyObject {
     func pieChartView(_ pieChartView: AMPieChartView, didDeSelectSection section: Int)
 }
 
-public class AMPieChartView: AMChartView {
+private let animationSpace: CGFloat = 10
+private let deSelectIndex: Int = -1
 
+public class AMPieChartView: AMChartView {
+    
     class FanLayer: CAShapeLayer {
         var index: Int = 0
         @objc var startAngle: Float = 0
@@ -31,7 +31,15 @@ public class AMPieChartView: AMChartView {
         var value: CGFloat = 0
         var rate: CGFloat = 0
         var isDounut = false
-        
+        private var centerPoint: CGPoint {
+            return CGPoint(x: bounds.midX, y: bounds.midY)
+        }
+        private var radius: CGFloat {
+            return (frame.width - animationSpace * 2) / 2
+        }
+        private var dounutRadius: CGFloat {
+            return radius / 2
+        }
         override class func needsDisplay(forKey key: String) -> Bool {
             if key == #keyPath(endAngle) || key == #keyPath(startAngle) {
                 return true
@@ -58,43 +66,24 @@ public class AMPieChartView: AMChartView {
         }
         
         override func draw(in ctx: CGContext) {
-            // Create the path
-            let centerPoint = CGPoint(x: bounds.midX, y: bounds.midY)
-            let radius = (frame.width - AMPCSpace * 2)/2
-            let smallRadius = radius/2
-            
             ctx.beginPath()
             if isDounut {
-                let p = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(startAngle)),
-                                y: centerPoint.y + smallRadius * CGFloat(sinf(startAngle)))
-                ctx.move(to: CGPoint(x: p.x, y: p.y))
+                ctx.move(to: .init(x: centerPoint.x + dounutRadius * CGFloat(cosf(startAngle)),
+                                   y: centerPoint.y + dounutRadius * CGFloat(sinf(startAngle))))
             } else {
                 ctx.move(to: CGPoint(x: centerPoint.x, y: centerPoint.y))
             }
-            
-            let p1 = CGPoint(x: centerPoint.x + radius * CGFloat(cosf(startAngle)),
-                             y: centerPoint.y + radius * CGFloat(sinf(self.startAngle)))
-            ctx.addLine(to: CGPoint(x: p1.x, y: p1.y))
-            
-            ctx.addArc(center: centerPoint,
-                           radius: radius,
-                           startAngle: CGFloat(startAngle),
-                           endAngle: CGFloat(endAngle),
-                           clockwise: false)
-            
+            ctx.addLine(to: .init(x: centerPoint.x + radius * CGFloat(cosf(startAngle)),
+                                  y: centerPoint.y + radius * CGFloat(sinf(startAngle))))
+            ctx.addArc(center: centerPoint, radius: radius, startAngle: CGFloat(startAngle),
+                       endAngle: CGFloat(endAngle), clockwise: false)
             if isDounut {
-                let p3 = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(endAngle)),
-                                 y: centerPoint.y + smallRadius * CGFloat(sinf(endAngle)))
-                ctx.addLine(to: CGPoint(x: p3.x, y: p3.y))
-                ctx.addArc(center: centerPoint,
-                               radius: smallRadius,
-                               startAngle: CGFloat(endAngle),
-                               endAngle: CGFloat(startAngle) + CGFloat(Double.pi * 2),
-                               clockwise: true)
+                ctx.addLine(to: .init(x: centerPoint.x + dounutRadius * CGFloat(cosf(endAngle)),
+                                      y: centerPoint.y + dounutRadius * CGFloat(sinf(endAngle))))
+                ctx.addArc(center: centerPoint, radius: dounutRadius, startAngle: CGFloat(endAngle),
+                           endAngle: CGFloat(startAngle) + CGFloat(Double.pi * 2), clockwise: true)
             }
             ctx.closePath()
-            
-            // Color it
             ctx.setFillColor(fillColor!)
             ctx.drawPath(using: .fill)
         }
@@ -111,7 +100,7 @@ public class AMPieChartView: AMChartView {
     
     weak public var dataSource: AMPieChartViewDataSource?
     weak public var delegate: AMPieChartViewDelegate?
-    public var animationDuration: CFTimeInterval = 0.6
+    public var animationDuration: CFTimeInterval = 0.4
     public var selectedAnimationDuration: CFTimeInterval = 0.3
     public var centerLabelAttribetedText: NSAttributedString? = nil {
         didSet {
@@ -121,78 +110,52 @@ public class AMPieChartView: AMChartView {
     
     private let chartView = UIView()
     private let animationChartView = UIView()
-    private var selectedIndex: Int = AMPCDeSelectIndex
-    private let centerLabel = UILabel()
-    
+    private var selectedIndex: Int = deSelectIndex
+    private let centerLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
+        label.numberOfLines = 0
+        return label
+    }()
     private var fanLayers = [FanLayer]()
     private var animationFanLayers = [FanLayer]()
     private var animationStartAngles = [Float]()
     private var animationEndAngles = [Float]()
+    private var radius: CGFloat {
+        return (chartView.frame.width - animationSpace * 2)/2
+    }
+    private var dounutRadius: CGFloat {
+        return radius / 2
+    }
     
     override public func initView() {
         addSubview(animationChartView)
         addSubview(chartView)
-        
         let tap = UITapGestureRecognizer(target: self,
                                          action: #selector(self.tapAction(gesture:)))
         chartView.addGestureRecognizer(tap)
-        
-        centerLabel.textAlignment = .center
-        centerLabel.adjustsFontSizeToFitWidth = true
-        centerLabel.numberOfLines = 0
         addSubview(centerLabel)
     }
         
-    // MARK:- Reload
-    override public func reloadData() {
-        selectedIndex = AMPCDeSelectIndex
-        settingChartViewFrame()
-        guard let dataSource = dataSource else {
-            return
-        }
-        
-        let sections = dataSource.numberOfSections(in: self)
-        prepareFanLayer(sections: sections)
-        var values = [CGFloat]()
-        var colors = [UIColor]()
-        for section in 0..<sections {
-            values.append(dataSource.pieChartView(self, valueForSection: section))
-            colors.append(dataSource.pieChartView(self, colorForSection: section))
-        }
-        prepareFanLayers(colors: colors, values: values)
-        showAnimation()
-    }
-    
-    public func redrawChart() {
-        fanLayers.forEach { $0.removeFromSuperlayer() }
-        fanLayers.removeAll()
-        animationFanLayers.forEach { $0.removeFromSuperlayer() }
-        animationFanLayers.removeAll()
-        reloadData()
-    }
-    
     // MARK:- Draw
     private func settingChartViewFrame() {
-        let length = (frame.width < frame.height) ? frame.width : frame.height
-        chartView.frame = CGRect(x: bounds.midX - length/2,
-                                  y: bounds.midY - length/2,
-                                  width: length,
-                                  height: length)
-        
+        let length = frame.width < frame.height ? frame.width : frame.height
+        chartView.frame = CGRect(x: bounds.midX - length/2, y: bounds.midY - length/2,
+                                 width: length, height: length)
         animationChartView.frame = chartView.frame
         chartView.isHidden = true
         animationChartView.isHidden = false
         
-        let labelLength : CGFloat = 1.4 * (length/2 - AMPCSpace)/2
-        centerLabel.frame = CGRect(x: bounds.midX - labelLength/2,
-                                    y: bounds.midY - labelLength/2,
-                                    width: labelLength,
-                                    height: labelLength)
+        centerLabel.frame = CGRect(x: 0, y: 0, width: dounutRadius*2, height: dounutRadius*2)
         centerLabel.font = centerLabelFont
         centerLabel.textColor = centerLabelTextColor
+        centerLabel.layer.cornerRadius = dounutRadius
+        centerLabel.layer.masksToBounds = true
+        centerLabel.center = chartView.center
     }
     
-    private func prepareFanLayer(sections: Int) {
+    private func prepareFanLayers(sections: Int) {
         while fanLayers.count < sections {
             let fanLayer = FanLayer()
             let animfanLayer = FanLayer()
@@ -217,11 +180,10 @@ public class AMPieChartView: AMChartView {
         }
     }
 
-    private func prepareFanLayers(colors: [UIColor], values: [CGFloat]) {
+    private func setFanLayers(colors: [UIColor], values: [CGFloat]) {
         let sum = values.reduce(0, +)
         var angle = Float(Double.pi/2 + Double.pi)
         for (index, fanLayer) in fanLayers.enumerated() {
-            let animFanLayer = animationFanLayers[index]
             let rate = values[index] / sum
             fanLayer.fillColor = colors[index].cgColor
             fanLayer.value = values[index]
@@ -230,6 +192,7 @@ public class AMPieChartView: AMChartView {
             fanLayer.endAngle = angle + Float(Double.pi*2) * Float(rate)
             fanLayer.isDounut = isDounut
             
+            let animFanLayer = animationFanLayers[index]
             animFanLayer.fillColor = colors[index].cgColor
             animFanLayer.value = values[index]
             animFanLayer.rate = rate
@@ -241,14 +204,38 @@ public class AMPieChartView: AMChartView {
         }
     }
     
+    private func makeFanLayerPath(center: CGPoint, startAngle: Float, endAngle: Float) -> UIBezierPath {
+        let piePath = UIBezierPath()
+        if isDounut {
+            piePath.move(to: CGPoint(x: center.x + dounutRadius * CGFloat(cosf(startAngle)),
+                                     y: center.y + dounutRadius * CGFloat(sinf(startAngle))))
+        } else {
+            piePath.move(to: center)
+        }
+        piePath.addLine(to: CGPoint(x: center.x + radius * CGFloat(cosf(startAngle)),
+                                    y: center.y + radius * CGFloat(sinf(startAngle))))
+        piePath.addArc(withCenter: center, radius: radius, startAngle: CGFloat(startAngle),
+                       endAngle: CGFloat(endAngle), clockwise: true)
+        if isDounut {
+            piePath.addLine(to: CGPoint(x: center.x + dounutRadius * CGFloat(cosf(endAngle)),
+                                        y: center.y + dounutRadius * CGFloat(sinf(endAngle))))
+            if startAngle + Float(Double.pi*2) == endAngle {
+                piePath.addArc(withCenter: center, radius: dounutRadius, startAngle: CGFloat(startAngle),
+                               endAngle: CGFloat(endAngle), clockwise: false)
+            } else {
+                piePath.addArc(withCenter: center, radius: dounutRadius, startAngle: CGFloat(endAngle),
+                               endAngle: CGFloat(startAngle) + CGFloat(Double.pi*2), clockwise: false)
+            }
+        }
+        piePath.close()
+        return piePath
+    }
+    
     private func showAnimation() {
         for (index ,animfanLayer) in animationFanLayers.enumerated() {
             CATransaction.begin()
-            CATransaction.setCompletionBlock{[unowned self] in
-                
-                let animation = animfanLayer.animation(forKey: "angleAnimation")
-                
-                if animation != nil {
+            CATransaction.setCompletionBlock { [unowned self] in
+                if animfanLayer.animation(forKey: "angleAnimation") != nil{
                     animfanLayer.removeAnimation(forKey: "angleAnimation")
                     self.animationComplete(index: index)
                 }
@@ -286,136 +273,95 @@ public class AMPieChartView: AMChartView {
         animationEndAngles.removeAll()
     }
     
-    func animationComplete(index: Int) {
+    private func animationComplete(index: Int) {
         if index < fanLayers.count {
             let fanLayer = fanLayers[index]
-            let radius = (chartView.frame.width - AMPCSpace * 2)/2
-            let centerPoint = CGPoint(x: fanLayer.bounds.midX,
-                                      y: fanLayer.bounds.midY)
-            
-            let path = createFanLayerPath(centerPoint: centerPoint,
-                                          radius: radius,
-                                          startAngle: fanLayer.startAngle,
-                                          endAngle: fanLayer.endAngle)
+            let path = makeFanLayerPath(center: .init(x: fanLayer.bounds.midX, y: fanLayer.bounds.midY),
+                                        startAngle: fanLayer.startAngle, endAngle: fanLayer.endAngle)
             fanLayer.path = path.cgPath
             animationChartView.isHidden = true
             chartView.isHidden = false
         }
     }
     
-    private func createFanLayerPath(centerPoint: CGPoint,
-                                    radius: CGFloat,
-                                    startAngle: Float,
-                                    endAngle: Float) -> UIBezierPath
-    {
-        let piePath = UIBezierPath()
-        let smallRadius = radius/2
-        if isDounut {
-            let p = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(startAngle)),
-                            y: centerPoint.y + smallRadius * CGFloat(sinf(startAngle)))
-            piePath.move(to: p)
-        } else {
-            piePath.move(to: centerPoint)
-        }
-        
-        piePath.addLine(to: CGPoint(x: centerPoint.x + radius * CGFloat(cosf(startAngle)),
-                                    y: centerPoint.y + radius * CGFloat(sinf(startAngle))))
-        piePath.addArc(withCenter: centerPoint,
-                       radius: radius,
-                       startAngle: CGFloat(startAngle),
-                       endAngle: CGFloat(endAngle),
-                       clockwise: true)
-        
-        if isDounut {
-            let p = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(endAngle)),
-                            y: centerPoint.y + smallRadius * CGFloat(sinf(endAngle)))
-            piePath.addLine(to: p)
-            
-            if startAngle + Float(Double.pi*2) == endAngle {
-                piePath.addArc(withCenter: centerPoint,
-                               radius: smallRadius,
-                               startAngle: CGFloat(startAngle),
-                               endAngle: CGFloat(endAngle),
-                               clockwise: false)
-            } else {
-                piePath.addArc(withCenter: centerPoint,
-                               radius:smallRadius,
-                               startAngle: CGFloat(endAngle),
-                               endAngle: CGFloat(startAngle) + CGFloat(Double.pi*2),
-                               clockwise:false)
-            }
-        }
-        piePath.close()
-        return piePath
-    }
-    
-    private func createPathAnimation(fromPath: UIBezierPath,
-                                     toPath: UIBezierPath,
-                                     animationDuration: CFTimeInterval) -> CABasicAnimation {
+    // MARK:- Select / Deselect
+    private func makeAnimation(fromPath: UIBezierPath, toPath: UIBezierPath, duration: CFTimeInterval) -> CABasicAnimation {
         let animation = CABasicAnimation(keyPath: "path")
-        animation.duration = animationDuration
+        animation.duration = duration
         animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
         animation.fromValue = fromPath.cgPath
         animation.toValue = toPath.cgPath
         return animation
     }
     
-    // MARK:- Select/Deselect
-    private func selectedFanAnimation(fanLayer: FanLayer) {
-        let radius = (chartView.frame.width - AMPCSpace * 2) / 2
+    private func setDidSelectAnimation(fanLayer: FanLayer) {
         let centerPoint = CGPoint(x: fanLayer.bounds.midX, y: fanLayer.bounds.midY)
-        let smallRadius = AMPCSpace
         let angle = (fanLayer.startAngle + fanLayer.endAngle) / 2
-        let smallCenterPoint = CGPoint(x: centerPoint.x + smallRadius * CGFloat(cosf(angle)),
-                                       y: centerPoint.y + smallRadius * CGFloat(sinf(angle)))
-        
-        let animationPath = createFanLayerPath(centerPoint: smallCenterPoint,
-                                               radius: radius,
-                                               startAngle: fanLayer.startAngle,
-                                               endAngle: fanLayer.endAngle)
+        let smallCenterPoint = CGPoint(x: centerPoint.x + animationSpace * CGFloat(cosf(angle)),
+                                       y: centerPoint.y + animationSpace * CGFloat(sinf(angle)))
+        let animationPath = makeFanLayerPath(center: smallCenterPoint, startAngle: fanLayer.startAngle, endAngle: fanLayer.endAngle)
         let startPath = UIBezierPath(cgPath: fanLayer.path!)
-        let animation = createPathAnimation(fromPath: startPath,
-                                            toPath: animationPath,
-                                            animationDuration: selectedAnimationDuration)
+        let animation = makeAnimation(fromPath: startPath, toPath: animationPath, duration: selectedAnimationDuration)
         fanLayer.path = animationPath.cgPath
         fanLayer.add(animation, forKey:nil)
     }
     
-    private func deselectedFanAnimation(fanLayer: FanLayer) {
-        let radius = (chartView.frame.width - AMPCSpace * 2) / 2
-        let centerPoint = CGPoint(x: fanLayer.bounds.midX, y: fanLayer.bounds.midY)
-        
-        let animationPath = createFanLayerPath(centerPoint: centerPoint,
-                                               radius: radius,
-                                               startAngle: fanLayer.startAngle,
-                                               endAngle: fanLayer.endAngle)
+    private func setDidDeselectAnimation(fanLayer: FanLayer) {
+        let animationPath = makeFanLayerPath(center: .init(x: fanLayer.bounds.midX, y: fanLayer.bounds.midY),
+                                             startAngle: fanLayer.startAngle, endAngle: fanLayer.endAngle)
         let startPath = UIBezierPath(cgPath: fanLayer.path!)
-        
-        let animation = createPathAnimation(fromPath: startPath,
-                                            toPath: animationPath,
-                                            animationDuration: selectedAnimationDuration)
+        let animation = makeAnimation(fromPath: startPath, toPath: animationPath, duration: selectedAnimationDuration)
         fanLayer.path = animationPath.cgPath
         fanLayer.add(animation, forKey:nil)
-        delegate?.pieChartView(self, didDeSelectSection: fanLayer.index)
     }
     
     @objc func tapAction(gesture: UITapGestureRecognizer) {
         let point = gesture.location(in: chartView)
         fanLayers.forEach {
             if UIBezierPath(cgPath: $0.path!).contains(point) {
-                if selectedIndex == AMPCDeSelectIndex {
-                    selectedFanAnimation(fanLayer: $0)
+                if selectedIndex == deSelectIndex {
+                    setDidSelectAnimation(fanLayer: $0)
                     selectedIndex = $0.index
                 } else if selectedIndex == $0.index {
-                    deselectedFanAnimation(fanLayer: $0)
-                    selectedIndex = AMPCDeSelectIndex
+                    setDidDeselectAnimation(fanLayer: $0)
+                    delegate?.pieChartView(self, didDeSelectSection: $0.index)
+                    selectedIndex = deSelectIndex
                 } else {
-                    selectedFanAnimation(fanLayer: $0)
-                    deselectedFanAnimation(fanLayer: fanLayers[selectedIndex])
+                    setDidSelectAnimation(fanLayer: $0)
+                    setDidDeselectAnimation(fanLayer: fanLayers[selectedIndex])
+                    delegate?.pieChartView(self, didDeSelectSection: fanLayers[selectedIndex].index)
                     selectedIndex = $0.index
                 }
                 delegate?.pieChartView(self, didSelectSection: selectedIndex)
             }
         }
+    }
+    
+    // MARK:- Reload
+    override public func reloadData() {
+        selectedIndex = deSelectIndex
+        settingChartViewFrame()
+        guard let dataSource = dataSource else {
+            return
+        }
+        
+        let sections = dataSource.numberOfSections(in: self)
+        prepareFanLayers(sections: sections)
+        var values = [CGFloat]()
+        var colors = [UIColor]()
+        for section in 0..<sections {
+            values.append(dataSource.pieChartView(self, valueForSection: section))
+            colors.append(dataSource.pieChartView(self, colorForSection: section))
+        }
+        setFanLayers(colors: colors, values: values)
+        showAnimation()
+    }
+    
+    public func redrawChart() {
+        fanLayers.forEach { $0.removeFromSuperlayer() }
+        fanLayers.removeAll()
+        animationFanLayers.forEach { $0.removeFromSuperlayer() }
+        animationFanLayers.removeAll()
+        reloadData()
     }
 }

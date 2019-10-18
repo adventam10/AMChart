@@ -44,6 +44,15 @@ public enum AMPointType {
     case type8
     /// x mark
     case type9
+    
+    var isFilled: Bool {
+        switch self {
+        case .type2, .type4, .type6, .type8:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 public struct AMScatterValue {

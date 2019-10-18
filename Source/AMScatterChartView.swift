@@ -177,7 +177,6 @@ public class AMScatterChartView: AMChartView {
         xLabels.forEach {
             let width = $0.frame.size.width
             let height = $0.frame.size.height
-            $0.backgroundColor = .red
             $0.frame = CGRect(x: x - width/2, y: xAxisView.frame.origin.y + axisWidth + margin, width: width, height: height)
             x += space
             addSubview($0)

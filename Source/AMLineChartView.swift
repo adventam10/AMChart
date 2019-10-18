@@ -46,14 +46,12 @@ public class AMLineChartView: AMChartView {
     private let yAxisView = UIView()
     private let xAxisTitleLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 0
         return label
     }()
     private let yAxisTitleLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .right
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 0
         return label
@@ -71,7 +69,6 @@ public class AMLineChartView: AMChartView {
         }
         return maxWidthLabel.frame.size.width + margin
     }
-    
     private var xAxisPositionY: CGFloat {
         let sorted = xLabels.sorted { $0.frame.height > $1.frame.height }
         let margin = xAxisTitleLabel.frame.size.height > 0 ? self.margin * 2 : self.margin
@@ -157,15 +154,6 @@ public class AMLineChartView: AMChartView {
             addSubview($0)
         }
     }
-        
-    private func prepareGraphLineLayers(positionY: CGFloat) {
-        let lineLayer = CALayer()
-        lineLayer.frame = CGRect(x: xAxisView.frame.origin.x, y: positionY,
-                                 width: xAxisView.frame.width, height: 1)
-        lineLayer.backgroundColor = UIColor.black.cgColor
-        layer.addSublayer(lineLayer)
-        horizontalLineLayers.append(lineLayer)
-    }
     
     private func prepareXlabels() {
         let width = (xAxisView.frame.size.width - axisWidth) / CGFloat(xLabels.count)
@@ -176,6 +164,15 @@ public class AMLineChartView: AMChartView {
             label.textAlignment = .center
             addSubview(label)
         }
+    }
+    
+    private func prepareGraphLineLayers(positionY: CGFloat) {
+        let lineLayer = CALayer()
+        lineLayer.frame = CGRect(x: xAxisView.frame.origin.x, y: positionY,
+                                 width: xAxisView.frame.width, height: 1)
+        lineLayer.backgroundColor = UIColor.black.cgColor
+        layer.addSublayer(lineLayer)
+        horizontalLineLayers.append(lineLayer)
     }
     
     private func prepareGraphLayers(sections: Int) {
@@ -322,8 +319,12 @@ public class AMLineChartView: AMChartView {
         settingAxisViewFrame()
         prepareYLabels()
         prepareXlabels()
+        if isHorizontalLine {
+            yLabels.forEach {
+                prepareGraphLineLayers(positionY: $0.center.y)
+            }
+        }
         prepareGraphLayers(sections: sections)
-        
         for section in 0..<sections {
             var values = [CGFloat]()
             for row in 0..<rows {

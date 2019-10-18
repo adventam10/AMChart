@@ -24,30 +24,19 @@ public class AMScatterChartView: AMChartView {
     @IBInspectable public var xAxisMaxValue: CGFloat = 1000
     @IBInspectable public var xAxisMinValue: CGFloat = 0
     @IBInspectable public var numberOfXAxisLabel: Int = 6
-    @IBInspectable public var yLabelWidth: CGFloat = 50.0
-    @IBInspectable public var xLabelHeight: CGFloat = 30.0
     @IBInspectable public var axisColor: UIColor = .black
     @IBInspectable public var axisWidth: CGFloat = 1.0
     @IBInspectable public var yAxisTitleFont: UIFont = .systemFont(ofSize: 15)
     @IBInspectable public var xAxisTitleFont: UIFont = .systemFont(ofSize: 15)
-    @IBInspectable public var xAxisTitleLabelHeight: CGFloat = 50.0
-    @IBInspectable public var yAxisTitleLabelHeight: CGFloat = 50.0
     @IBInspectable public var yLabelsFont: UIFont = .systemFont(ofSize: 15)
     @IBInspectable public var xLabelsFont: UIFont = .systemFont(ofSize: 15)
     @IBInspectable public var yAxisTitleColor: UIColor = .black
     @IBInspectable public var xAxisTitleColor: UIColor = .black
     @IBInspectable public var yLabelsTextColor: UIColor = .black
     @IBInspectable public var xLabelsTextColor: UIColor = .black
-    @IBInspectable public var yAxisTitle: String = "" {
-        didSet {
-            yAxisTitleLabel.text = yAxisTitle
-        }
-    }
-    @IBInspectable public var xAxisTitle: String = "" {
-        didSet {
-            xAxisTitleLabel.text = xAxisTitle
-        }
-    }
+    @IBInspectable public var isHorizontalLine: Bool = false
+    @IBInspectable public var yAxisTitle: String = ""
+    @IBInspectable public var xAxisTitle: String = ""
     
     weak public var dataSource: AMScatterChartViewDataSource?
     public var yAxisDecimalFormat: AMDecimalFormat = .none
@@ -56,9 +45,19 @@ public class AMScatterChartView: AMChartView {
     
     private let xAxisView = UIView()
     private let yAxisView = UIView()
-    private let xAxisTitleLabel = UILabel()
-    private let yAxisTitleLabel = UILabel()
-    private let space: CGFloat = 10
+    private let xAxisTitleLabel: UILabel = {
+        let label = UILabel()
+        label.adjustsFontSizeToFitWidth = true
+        label.numberOfLines = 0
+        return label
+    }()
+    private let yAxisTitleLabel: UILabel = {
+        let label = UILabel()
+        label.adjustsFontSizeToFitWidth = true
+        label.numberOfLines = 0
+        return label
+    }()
+    private let margin: CGFloat = 8
     private let pointRadius: CGFloat = 5
     
     private var xLabels = [UILabel]()
@@ -66,99 +65,91 @@ public class AMScatterChartView: AMChartView {
     private var graphLayers = [CAShapeLayer]()
     private var horizontalLineLayers = [CALayer]()
     private var graphLayer = CALayer()
+    private var yAxisPositionX: CGFloat {
+        let sorted = yLabels.sorted { $0.frame.width > $1.frame.width }
+        guard let maxWidthLabel = sorted.first else {
+            return margin
+        }
+        return maxWidthLabel.frame.size.width + margin
+    }
+    private var xAxisPositionY: CGFloat {
+        let sorted = xLabels.sorted { $0.frame.height > $1.frame.height }
+        let margin = xAxisTitleLabel.frame.size.height > 0 ? self.margin * 2 : self.margin
+        guard let maxHeightLabel = sorted.first else {
+            return frame.size.height - margin - xAxisTitleLabel.frame.size.height - axisWidth
+        }
+        return frame.size.height - maxHeightLabel.frame.size.height - margin - xAxisTitleLabel.frame.size.height - axisWidth
+    }
+    private var xAxisWidth: CGFloat {
+        let labelWidth = xLabels.last?.frame.size.width ?? 0
+        return frame.size.width - yAxisPositionX - labelWidth/2
+    }
     
     override public func initView() {
-        // Set Y axis
         addSubview(yAxisView)
-        yAxisTitleLabel.textAlignment = .right
-        yAxisTitleLabel.adjustsFontSizeToFitWidth = true
-        yAxisTitleLabel.numberOfLines = 0
         addSubview(yAxisTitleLabel)
-        
-        // Set X axis
         addSubview(xAxisView)
-        xAxisTitleLabel.textAlignment = .center
-        xAxisTitleLabel.adjustsFontSizeToFitWidth = true
-        xAxisTitleLabel.numberOfLines = 0
         addSubview(xAxisTitleLabel)
-        
         layer.addSublayer(graphLayer)
     }
     
-    // MARK:- Reload
-    override public func reloadData() {
-        clearView()
-        settingAxisViewFrame()
-        settingAxisTitleLayout()
-        prepareYLabels()
-        prepareXLabels()
-        
-        guard let dataSource = dataSource else {
-            return
+    // MARK:- Draw
+    private func makeXAxisLabels() -> [UILabel] {
+        let valueCount = (xAxisMaxValue - xAxisMinValue) / CGFloat(numberOfXAxisLabel - 1)
+        var value = xAxisMinValue
+        var labels = [UILabel]()
+        for _ in 0..<numberOfXAxisLabel {
+            let label = UILabel(frame: .zero)
+            label.font = xLabelsFont
+            label.textColor = xLabelsTextColor
+            labels.append(label)
+            label.text = xAxisDecimalFormat.formattedValue(value)
+            label.sizeToFit()
+            value += valueCount
         }
-        
-        let sections = dataSource.numberOfSections(in: self)
-        prepareGraphLayers(sections:sections)
-        
-        for section in 0..<sections {
-            var values = [AMScatterValue]()
-            let rows = dataSource.scatterChartView(self, numberOfRowsInSection: section)
-            for row in 0..<rows {
-                let indexPath = IndexPath(row:row, section: section)
-                let value = dataSource.scatterChartView(self, valueForRowAtIndexPath: indexPath)
-                values.append(value)
-            }
-            let pointType = dataSource.scatterChartView(self, pointTypeForSection: section)
-            let color = dataSource.scatterChartView(self, colorForSection: section)
-            prepareGraph(section: section,
-                         color: color,
-                         values: values,
-                         pointType: pointType)
-        }
-        showAnimation()
+        return labels
     }
     
-    // MARK:- Draw
-    private func clearView() {
-        xLabels.forEach { $0.removeFromSuperview() }
-        xLabels.removeAll()
-        
-        yLabels.forEach { $0.removeFromSuperview() }
-        yLabels.removeAll()
-        
-        horizontalLineLayers.forEach { $0.removeFromSuperlayer() }
-        horizontalLineLayers.removeAll()
-        
-        graphLayers.forEach { $0.removeFromSuperlayer() }
-        graphLayers.removeAll()
+    private func makeYAxisLabels() -> [UILabel] {
+        let valueCount = (yAxisMaxValue - yAxisMinValue) / CGFloat(numberOfYAxisLabel - 1)
+        var value = yAxisMinValue
+        var labels = [UILabel]()
+        for _ in 0..<numberOfYAxisLabel {
+            let label = UILabel(frame: .zero)
+            label.font = yLabelsFont
+            label.textColor = yLabelsTextColor
+            labels.append(label)
+            label.text = yAxisDecimalFormat.formattedValue(value)
+            label.sizeToFit()
+            value += valueCount
+        }
+        return labels
+    }
+    
+    private func prepareXAxisTitleLabel() {
+        xAxisTitleLabel.font = xAxisTitleFont
+        xAxisTitleLabel.textColor = xAxisTitleColor
+        xAxisTitleLabel.text = xAxisTitle
+        xAxisTitleLabel.sizeToFit()
+        xAxisTitleLabel.textAlignment = .center
+        xAxisTitleLabel.frame = CGRect(x: yAxisPositionX, y: frame.height - xAxisTitleLabel.frame.size.height,
+                                       width: xAxisWidth, height: xAxisTitleLabel.frame.size.height)
+    }
+    
+    private func prepareYAxisTitleLabel() {
+        yAxisTitleLabel.font = yAxisTitleFont
+        yAxisTitleLabel.textColor = yAxisTitleColor
+        yAxisTitleLabel.text = yAxisTitle
+        yAxisTitleLabel.sizeToFit()
+        let width = yAxisTitleLabel.frame.size.width
+        yAxisTitleLabel.frame = CGRect(x: yAxisPositionX - width/2, y: 0, width: width , height: yAxisTitleLabel.frame.size.height)
     }
     
     private func settingAxisViewFrame() {
-        let a = (frame.height - space - yAxisTitleLabelHeight - space - xLabelHeight - xAxisTitleLabelHeight)
-        let b = CGFloat(numberOfYAxisLabel - 1)
-        var yLabelHeight = (a / b) * 0.6
-        if yLabelHeight.isNaN {
-            yLabelHeight = 0
-        }
-        
-        yAxisView.frame = CGRect(x: space + yLabelWidth,
-                                 y: space + yAxisTitleLabelHeight + yLabelHeight/2,
-                                 width: axisWidth,
-                                 height: frame.height - (space + yAxisTitleLabelHeight + yLabelHeight/2) - space - xLabelHeight - xAxisTitleLabelHeight)
-        yAxisTitleLabel.frame = CGRect(x: space,
-                                       y: space,
-                                       width: yLabelWidth - space,
-                                       height: yAxisTitleLabelHeight)
-        
-        xAxisView.frame = CGRect(x: yAxisView.frame.minX,
-                                 y: yAxisView.frame.maxY,
-                                 width: frame.width - yAxisView.frame.minX - space,
-                                 height: axisWidth)
-        xAxisTitleLabel.frame = CGRect(x: xAxisView.frame.minX,
-                                       y: frame.height - xAxisTitleLabelHeight - space,
-                                       width: xAxisView.frame.width,
-                                       height: xAxisTitleLabelHeight)
-        
+        let yLabelHeight = yLabels.sorted { $0.frame.height > $1.frame.height }.first!.frame.size.height
+        let y = yAxisTitleLabel.frame.size.height + margin + yLabelHeight/2
+        yAxisView.frame = CGRect(x: yAxisPositionX, y: y, width: axisWidth, height: xAxisPositionY - y)
+        xAxisView.frame = CGRect(x: yAxisView.frame.minX, y: xAxisPositionY, width: xAxisWidth, height: axisWidth)
         yAxisView.backgroundColor = axisColor
         xAxisView.backgroundColor = axisColor
         
@@ -168,83 +159,35 @@ public class AMScatterChartView: AMChartView {
                                   height: yAxisView.frame.height)
     }
     
-    private func settingAxisTitleLayout() {
-        yAxisTitleLabel.font = yAxisTitleFont
-        yAxisTitleLabel.textColor = yAxisTitleColor
-        
-        xAxisTitleLabel.font = xAxisTitleFont
-        xAxisTitleLabel.textColor = xAxisTitleColor
-    }
-    
     private func prepareYLabels() {
-        if numberOfYAxisLabel <= 0 {
-            return
-        }
-        
-        let valueCount = (yAxisMaxValue - yAxisMinValue) / CGFloat(numberOfYAxisLabel - 1)
-        var value = yAxisMinValue
-        let height = (yAxisView.frame.height / CGFloat(numberOfYAxisLabel - 1)) * 0.6
-        let space = (yAxisView.frame.height / CGFloat(numberOfYAxisLabel - 1)) * 0.4
-        var y = xAxisView.frame.minY - height/2
-        
-        for index in 0..<numberOfYAxisLabel {
-            let yLabel = UILabel(frame:CGRect(x: space,
-                                              y: y,
-                                              width: yLabelWidth - space,
-                                              height: height))
-            yLabel.tag = index
-            yLabels.append(yLabel)
-            yLabel.textAlignment = .right
-            yLabel.adjustsFontSizeToFitWidth = true
-            yLabel.font = yLabelsFont
-            yLabel.textColor = yLabelsTextColor
-            addSubview(yLabel)
-            yLabel.text = yAxisDecimalFormat.formattedValue(value)
-            
-            y -= height + space
-            value += valueCount
+        let space = (yAxisView.frame.height / CGFloat(numberOfYAxisLabel - 1))
+        var y = xAxisView.frame.origin.y
+        yLabels.forEach {
+            let width = $0.frame.size.width
+            let height = $0.frame.size.height
+            $0.frame = CGRect(x: yAxisView.frame.origin.x - width - margin, y: y - height/2, width: width, height: height)
+            y -= space
+            addSubview($0)
         }
     }
     
     private func prepareXLabels() {
-        if numberOfXAxisLabel <= 0 {
-            return
-        }
-        
-        let valueCount = (xAxisMaxValue - xAxisMinValue) / CGFloat(numberOfXAxisLabel - 1)
-        var value = xAxisMinValue
-        var width = (xAxisView.frame.width / CGFloat(numberOfXAxisLabel - 1)) * 0.6
-        if width > (frame.width - xAxisView.frame.maxX)*2 {
-            width = (frame.width - xAxisView.frame.maxX)*2
-        }
-        let space = (xAxisView.frame.width - (width*CGFloat(numberOfXAxisLabel - 1))) / CGFloat(numberOfXAxisLabel - 1)
-        var x = xAxisView.frame.minX - width/2
-        
-        for index in 0..<numberOfXAxisLabel {
-            let xLabel = UILabel(frame:CGRect(x: x,
-                                              y: xAxisView.frame.maxY,
-                                              width: width,
-                                              height: xLabelHeight))
-            
-            xLabel.tag = index
-            xLabels.append(xLabel)
-            xLabel.textAlignment = .center
-            xLabel.adjustsFontSizeToFitWidth = true
-            xLabel.font = xLabelsFont
-            xLabel.textColor = xLabelsTextColor
-            addSubview(xLabel)
-            xLabel.text = xAxisDecimalFormat.formattedValue(value)
-            x += width + space
-            value += valueCount
+        let space = (xAxisWidth / CGFloat(numberOfXAxisLabel - 1))
+        var x = xAxisView.frame.origin.x
+        xLabels.forEach {
+            let width = $0.frame.size.width
+            let height = $0.frame.size.height
+            $0.backgroundColor = .red
+            $0.frame = CGRect(x: x - width/2, y: xAxisView.frame.origin.y + axisWidth + margin, width: width, height: height)
+            x += space
+            addSubview($0)
         }
     }
     
     private func prepareGraphLineLayers(positionY: CGFloat) {
         let lineLayer = CALayer()
-        lineLayer.frame = CGRect(x: xAxisView.frame.minX,
-                                 y: positionY,
-                                 width: xAxisView.frame.width,
-                                 height: 1)
+        lineLayer.frame = CGRect(x: xAxisView.frame.minX, y: positionY,
+                                 width: xAxisView.frame.width, height: 1)
         lineLayer.backgroundColor = UIColor.black.cgColor
         layer.addSublayer(lineLayer)
         horizontalLineLayers.append(lineLayer)
@@ -266,23 +209,16 @@ public class AMScatterChartView: AMChartView {
         graphLayers.forEach { $0.frame = graphLayer.bounds }
     }
     
-    private func prepareGraph(section: Int,
-                              color: UIColor,
-                              values: [AMScatterValue],
-                              pointType: AMPointType) {
-        
-        let graphLayer = graphLayers[section]
+    private func setGraphLayerColor(_ graphLayer: CAShapeLayer, color: UIColor, pointType: AMPointType) {
         graphLayer.strokeColor = color.cgColor
-        
-        if pointType == .type1 ||
-            pointType == .type3 ||
-            pointType == .type5 ||
-            pointType == .type7 {
-            graphLayer.fillColor = UIColor.clear.cgColor
-        } else {
+        if pointType.isFilled {
             graphLayer.fillColor = color.cgColor
+        } else {
+            graphLayer.fillColor = UIColor.clear.cgColor
         }
-        
+    }
+    
+    private func makeAnimationPath(_ graphLayer: CAShapeLayer, values: [AMScatterValue], pointType: AMPointType) -> UIBezierPath {
         let path = UIBezierPath()
         for value in values {
             var x =  (value.xValue / (xAxisMaxValue - xAxisMinValue)) * graphLayer.frame.width - graphLayer.frame.width * (xAxisMinValue / (xAxisMaxValue - xAxisMinValue))
@@ -293,54 +229,64 @@ public class AMScatterChartView: AMChartView {
             if x.isNaN {
                 x = 0
             }
-            
             let point = CGPoint(x: x, y: y)
-            path.append(createPointPath(centerPoint: point, pointType: pointType))
+            path.append(makePointPath(center: point, pointType: pointType))
             path.move(to: point)
         }
-        graphLayer.path = path.cgPath
+        return path
     }
     
-    private func createPointPath(centerPoint: CGPoint,
-                                 pointType: AMPointType) -> UIBezierPath {
-        if pointType == .type1 || pointType == .type2 {
-            return UIBezierPath(ovalIn: CGRect(x: centerPoint.x - pointRadius,
-                                               y: centerPoint.y - pointRadius,
-                                               width: pointRadius * 2,
-                                               height: pointRadius * 2))
-        } else if pointType == .type3 || pointType == .type4 {
-            return UIBezierPath(rect: CGRect(x: centerPoint.x - pointRadius,
-                                             y: centerPoint.y - pointRadius,
-                                             width: pointRadius * 2,
-                                             height: pointRadius * 2))
-        } else if pointType == .type5 || pointType == .type6 {
-            let path = UIBezierPath()
-            path.move(to: CGPoint(x: centerPoint.x, y: centerPoint.y - pointRadius))
-            path.addLine(to: CGPoint(x: centerPoint.x + pointRadius, y: centerPoint.y + pointRadius))
-            path.addLine(to: CGPoint(x: centerPoint.x - pointRadius, y: centerPoint.y + pointRadius))
-            path.close()
-            return path
-        } else if pointType == .type7 || pointType == .type8 {
-            let path = UIBezierPath()
-            path.move(to: CGPoint(x: centerPoint.x, y: centerPoint.y - pointRadius))
-            path.addLine(to: CGPoint(x: centerPoint.x + pointRadius, y: centerPoint.y))
-            path.addLine(to: CGPoint(x: centerPoint.x , y: centerPoint.y + pointRadius))
-            path.addLine(to: CGPoint(x: centerPoint.x - pointRadius, y: centerPoint.y))
-            path.close()
-            return path
-        } else if pointType == .type9 {
-            let path = UIBezierPath()
-            path.move(to: CGPoint(x: centerPoint.x - pointRadius, y: centerPoint.y - pointRadius))
-            path.addLine(to: CGPoint(x: centerPoint.x + pointRadius, y: centerPoint.y + pointRadius))
-            path.move(to: CGPoint(x: centerPoint.x + pointRadius, y: centerPoint.y - pointRadius))
-            path.addLine(to: CGPoint(x: centerPoint.x - pointRadius, y: centerPoint.y + pointRadius))
-            return path
+    private func makePointPath(center: CGPoint, pointType: AMPointType) -> UIBezierPath {
+        switch pointType {
+        case .type1, .type2:
+            return makeCirclePointPath(center: center)
+        case .type3, .type4:
+            return makeSquarePointPath(center: center)
+        case .type5, .type6:
+            return makeTrianglePointPath(center: center)
+        case .type7, .type8:
+            return makeDiamondPointPath(center: center)
+        case .type9:
+            return makeXPointPath(center: center)
         }
-        
-        return UIBezierPath(ovalIn: CGRect(x: centerPoint.x - pointRadius,
-                                           y: centerPoint.y - pointRadius,
-                                           width: pointRadius * 2,
-                                           height: pointRadius * 2))
+    }
+    
+    private func makeCirclePointPath(center: CGPoint) -> UIBezierPath {
+        return .init(ovalIn: CGRect(x: center.x - pointRadius, y: center.y - pointRadius,
+                                    width: pointRadius * 2, height: pointRadius * 2))
+    }
+    
+    private func makeSquarePointPath(center: CGPoint) -> UIBezierPath {
+        return .init(rect: CGRect(x: center.x - pointRadius, y: center.y - pointRadius,
+                                  width: pointRadius * 2, height: pointRadius * 2))
+    }
+    
+    private func makeTrianglePointPath(center: CGPoint) -> UIBezierPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: center.x, y: center.y - pointRadius))
+        path.addLine(to: CGPoint(x: center.x + pointRadius, y: center.y + pointRadius))
+        path.addLine(to: CGPoint(x: center.x - pointRadius, y: center.y + pointRadius))
+        path.close()
+        return path
+    }
+    
+    private func makeDiamondPointPath(center: CGPoint) -> UIBezierPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: center.x, y: center.y - pointRadius))
+        path.addLine(to: CGPoint(x: center.x + pointRadius, y: center.y))
+        path.addLine(to: CGPoint(x: center.x , y: center.y + pointRadius))
+        path.addLine(to: CGPoint(x: center.x - pointRadius, y: center.y))
+        path.close()
+        return path
+    }
+    
+    private func makeXPointPath(center: CGPoint) -> UIBezierPath {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: center.x - pointRadius, y: center.y - pointRadius))
+        path.addLine(to: CGPoint(x: center.x + pointRadius, y: center.y + pointRadius))
+        path.move(to: CGPoint(x: center.x + pointRadius, y: center.y - pointRadius))
+        path.addLine(to: CGPoint(x: center.x - pointRadius, y: center.y + pointRadius))
+        return path
     }
     
     private func showAnimation() {
@@ -351,5 +297,55 @@ public class AMScatterChartView: AMChartView {
             animation.toValue = 1
             graphLayer.add(animation, forKey: nil)
         }
+    }
+    
+    // MARK:- Reload
+    override public func reloadData() {
+        clearView()
+        guard let dataSource = dataSource else {
+            return
+        }
+        let sections = dataSource.numberOfSections(in: self)
+        precondition(numberOfYAxisLabel > 1, "numberOfYAxisLabel is less than 2")
+        precondition(numberOfXAxisLabel > 1, "numberOfXAxisLabel is less than 2")
+        yLabels = makeYAxisLabels()
+        xLabels = makeXAxisLabels()
+        prepareXAxisTitleLabel()
+        prepareYAxisTitleLabel()
+        settingAxisViewFrame()
+        prepareYLabels()
+        prepareXLabels()
+        if isHorizontalLine {
+            yLabels.forEach {
+                prepareGraphLineLayers(positionY: $0.center.y)
+            }
+        }
+        prepareGraphLayers(sections:sections)
+        for section in 0..<sections {
+            var values = [AMScatterValue]()
+            let rows = dataSource.scatterChartView(self, numberOfRowsInSection: section)
+            for row in 0..<rows {
+                values.append(dataSource.scatterChartView(self, valueForRowAtIndexPath: .init(row:row, section: section)))
+            }
+            let pointType = dataSource.scatterChartView(self, pointTypeForSection: section)
+            let graphLayer = graphLayers[section]
+            setGraphLayerColor(graphLayer, color: dataSource.scatterChartView(self, colorForSection: section), pointType: pointType)
+            graphLayer.path = makeAnimationPath(graphLayer, values: values, pointType: pointType).cgPath
+        }
+        showAnimation()
+    }
+    
+    private func clearView() {
+        xLabels.forEach { $0.removeFromSuperview() }
+        xLabels.removeAll()
+        
+        yLabels.forEach { $0.removeFromSuperview() }
+        yLabels.removeAll()
+        
+        horizontalLineLayers.forEach { $0.removeFromSuperlayer() }
+        horizontalLineLayers.removeAll()
+        
+        graphLayers.forEach { $0.removeFromSuperlayer() }
+        graphLayers.removeAll()
     }
 }

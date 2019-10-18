@@ -42,7 +42,7 @@ public class AMRadarChartView: AMChartView {
     @IBInspectable public var numberOfAxisLabels: Int = 6
     @IBInspectable public var axisColor: UIColor = .black
     @IBInspectable public var axisWidth: CGFloat = 1.0
-    @IBInspectable public var axisLabelsFont: UIFont = .systemFont(ofSize: 12)
+    @IBInspectable public var axisLabelsFont: UIFont = .systemFont(ofSize: 15)
     @IBInspectable public var axisLabelsTextColor: UIColor = .black
     @IBInspectable public var isDottedLine: Bool = false
     

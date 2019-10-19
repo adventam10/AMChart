@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -17,100 +13,84 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="SampleAMChart" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HPb-KN-1tQ" customClass="AMLineChartView" customModule="SampleAMChart" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="150" height="200"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xw9-g8-O0L" customClass="AMScatterChartView" customModule="SampleAMChart" customModuleProvider="target">
-                                <rect key="frame" x="225" y="20" width="150" height="200"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qjx-9l-6fB" customClass="AMRadarChartView" customModule="SampleAMChart" customModuleProvider="target">
-                                <rect key="frame" x="112.5" y="258.5" width="150" height="150"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="Qjx-9l-6fB" secondAttribute="height" multiplier="1:1" id="H5B-jA-G3b"/>
-                                </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mJH-fo-5e9" customClass="AMPieChartView" customModule="SampleAMChart" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="467" width="150" height="200"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EWq-rr-LKR" customClass="AMBarChartView" customModule="SampleAMChart" customModuleProvider="target">
-                                <rect key="frame" x="225" y="467" width="150" height="200"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QzU-Mt-O6v">
-                                <rect key="frame" x="0.0" y="258" width="112.5" height="150"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="odq-VT-QV7">
+                                <rect key="frame" x="8" y="8" width="304" height="552"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LDt-Ch-hAy">
-                                        <rect key="frame" x="0.0" y="74.5" width="112.5" height="1"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="b5d-LC-hpv"/>
-                                        </constraints>
-                                    </view>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WFn-tM-OkC">
-                                        <rect key="frame" x="32" y="34.5" width="48" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="30" id="Ct9-vY-TkS"/>
-                                            <constraint firstAttribute="width" relation="lessThanOrEqual" constant="80" id="Lqg-Mi-elV"/>
-                                        </constraints>
-                                        <state key="normal" title="reload"/>
-                                        <connections>
-                                            <action selector="tappedReloadButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yq4-b8-7WX"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iZB-wa-K7K">
-                                        <rect key="frame" x="32" y="85.5" width="48" height="30"/>
-                                        <state key="normal" title="redraw"/>
-                                        <connections>
-                                            <action selector="tappedRedrawButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DNF-VA-V6f"/>
-                                        </connections>
-                                    </button>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="OeN-rZ-8yn">
+                                        <rect key="frame" x="0.0" y="0.0" width="304" height="178.5"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HPb-KN-1tQ" customClass="AMLineChartView" customModule="SampleAMChart" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="144" height="178.5"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xw9-g8-O0L" customClass="AMScatterChartView" customModule="SampleAMChart" customModuleProvider="target">
+                                                <rect key="frame" x="160" y="0.0" width="144" height="178.5"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </view>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="mUg-a9-QLb">
+                                        <rect key="frame" x="30.5" y="186.5" width="243" height="179"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="9xI-hp-pGY">
+                                                <rect key="frame" x="0.0" y="0.0" width="48" height="179"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WFn-tM-OkC">
+                                                        <rect key="frame" x="0.0" y="0.0" width="48" height="81.5"/>
+                                                        <state key="normal" title="reload"/>
+                                                        <connections>
+                                                            <action selector="tappedReloadButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="yq4-b8-7WX"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iZB-wa-K7K">
+                                                        <rect key="frame" x="0.0" y="97.5" width="48" height="81.5"/>
+                                                        <state key="normal" title="redraw"/>
+                                                        <connections>
+                                                            <action selector="tappedRedrawButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="DNF-VA-V6f"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                            </stackView>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qjx-9l-6fB" customClass="AMRadarChartView" customModule="SampleAMChart" customModuleProvider="target">
+                                                <rect key="frame" x="64" y="0.0" width="179" height="179"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="Qjx-9l-6fB" secondAttribute="height" multiplier="1:1" id="gpS-Qf-T5P"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="eRB-B2-SMd">
+                                        <rect key="frame" x="0.0" y="373.5" width="304" height="178.5"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mJH-fo-5e9" customClass="AMPieChartView" customModule="SampleAMChart" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="144" height="178.5"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EWq-rr-LKR" customClass="AMBarChartView" customModule="SampleAMChart" customModuleProvider="target">
+                                                <rect key="frame" x="160" y="0.0" width="144" height="178.5"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            </view>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="LDt-Ch-hAy" firstAttribute="leading" secondItem="QzU-Mt-O6v" secondAttribute="leading" id="4PG-J7-kd6"/>
-                                    <constraint firstItem="LDt-Ch-hAy" firstAttribute="top" secondItem="WFn-tM-OkC" secondAttribute="bottom" constant="10" id="NbP-9K-dJx"/>
-                                    <constraint firstAttribute="trailing" secondItem="LDt-Ch-hAy" secondAttribute="trailing" id="b7n-ui-TmV"/>
-                                    <constraint firstItem="iZB-wa-K7K" firstAttribute="width" secondItem="WFn-tM-OkC" secondAttribute="width" id="blj-lz-zEx"/>
-                                    <constraint firstItem="iZB-wa-K7K" firstAttribute="centerX" secondItem="WFn-tM-OkC" secondAttribute="centerX" id="dqd-rX-EzG"/>
-                                    <constraint firstItem="iZB-wa-K7K" firstAttribute="height" secondItem="WFn-tM-OkC" secondAttribute="height" id="g8j-Qa-xQW"/>
-                                    <constraint firstItem="WFn-tM-OkC" firstAttribute="centerX" secondItem="QzU-Mt-O6v" secondAttribute="centerX" id="lcK-1F-bjz"/>
-                                    <constraint firstItem="iZB-wa-K7K" firstAttribute="top" secondItem="LDt-Ch-hAy" secondAttribute="bottom" constant="10" id="tkv-as-UgH"/>
-                                    <constraint firstItem="LDt-Ch-hAy" firstAttribute="centerY" secondItem="QzU-Mt-O6v" secondAttribute="centerY" id="ugN-td-ale"/>
+                                    <constraint firstAttribute="trailing" secondItem="eRB-B2-SMd" secondAttribute="trailing" id="Dvb-fg-Bc4"/>
+                                    <constraint firstAttribute="trailing" secondItem="OeN-rZ-8yn" secondAttribute="trailing" id="ajf-0z-Yky"/>
+                                    <constraint firstItem="eRB-B2-SMd" firstAttribute="leading" secondItem="odq-VT-QV7" secondAttribute="leading" id="ls8-gQ-xp0"/>
+                                    <constraint firstItem="OeN-rZ-8yn" firstAttribute="leading" secondItem="odq-VT-QV7" secondAttribute="leading" id="zJf-0Q-ruX"/>
                                 </constraints>
-                            </view>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="EWq-rr-LKR" secondAttribute="trailing" id="1WU-4M-J9c"/>
-                            <constraint firstItem="EWq-rr-LKR" firstAttribute="width" secondItem="mJH-fo-5e9" secondAttribute="width" id="1yU-2G-sMC"/>
-                            <constraint firstItem="HPb-KN-1tQ" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.4" id="3sl-eb-fFT"/>
-                            <constraint firstItem="Qjx-9l-6fB" firstAttribute="width" secondItem="HPb-KN-1tQ" secondAttribute="width" id="7H1-3L-MlJ"/>
-                            <constraint firstItem="QzU-Mt-O6v" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="9TN-x6-peT"/>
-                            <constraint firstItem="xw9-g8-O0L" firstAttribute="height" secondItem="HPb-KN-1tQ" secondAttribute="height" id="FAx-84-ift"/>
-                            <constraint firstItem="mJH-fo-5e9" firstAttribute="height" secondItem="HPb-KN-1tQ" secondAttribute="height" id="GCd-zp-v3I"/>
-                            <constraint firstItem="Qjx-9l-6fB" firstAttribute="leading" secondItem="QzU-Mt-O6v" secondAttribute="trailing" id="Hvv-WZ-A7i"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="xw9-g8-O0L" secondAttribute="trailing" id="KMg-j9-Oda"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="mJH-fo-5e9" secondAttribute="bottom" id="NN8-zZ-qNP"/>
-                            <constraint firstItem="xw9-g8-O0L" firstAttribute="centerY" secondItem="HPb-KN-1tQ" secondAttribute="centerY" id="Qfd-V0-6bj"/>
-                            <constraint firstItem="mJH-fo-5e9" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="QxJ-T5-dKN"/>
-                            <constraint firstItem="xw9-g8-O0L" firstAttribute="width" secondItem="HPb-KN-1tQ" secondAttribute="width" id="RWJ-TE-ykg"/>
-                            <constraint firstItem="HPb-KN-1tQ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="SQP-ca-qVQ"/>
-                            <constraint firstItem="mJH-fo-5e9" firstAttribute="width" secondItem="HPb-KN-1tQ" secondAttribute="width" id="Vye-W6-DFJ"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="EWq-rr-LKR" secondAttribute="bottom" id="YHe-PP-Fnm"/>
-                            <constraint firstItem="Qjx-9l-6fB" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ZbD-iv-8wl"/>
-                            <constraint firstItem="EWq-rr-LKR" firstAttribute="height" secondItem="mJH-fo-5e9" secondAttribute="height" id="Zse-7P-3i7"/>
-                            <constraint firstItem="QzU-Mt-O6v" firstAttribute="centerY" secondItem="Qjx-9l-6fB" secondAttribute="centerY" id="anP-0X-dEp"/>
-                            <constraint firstItem="HPb-KN-1tQ" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.3" id="fOh-3r-oHl"/>
-                            <constraint firstItem="Qjx-9l-6fB" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ghH-7c-nul"/>
-                            <constraint firstItem="QzU-Mt-O6v" firstAttribute="height" secondItem="Qjx-9l-6fB" secondAttribute="height" id="rrP-zC-yoE"/>
-                            <constraint firstItem="HPb-KN-1tQ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="xD4-2c-Qmw"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="odq-VT-QV7" secondAttribute="bottom" constant="8" id="5Ms-N1-Sss"/>
+                            <constraint firstItem="odq-VT-QV7" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="7FM-VN-Orx"/>
+                            <constraint firstItem="odq-VT-QV7" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="8" id="HFg-HZ-I5c"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="odq-VT-QV7" secondAttribute="trailing" constant="8" id="rcl-qh-dnk"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>

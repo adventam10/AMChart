@@ -25,19 +25,25 @@ class ViewController: UIViewController {
     private let radarAxisNum = 6
     private var barColors = [UIColor]()
     private var lineRowNum = 0
-    
     private let titles = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        prepareDataList()
         radarChartView.dataSource = self
         barChartView.dataSource = self
         pieChartView.dataSource = self
         scatterChartView.dataSource = self
         lineChartView.dataSource = self
+        scatterChartView.xAxisMinValue = 0
+        scatterChartView.xAxisMaxValue = 100
+        scatterChartView.yAxisMinValue = 0
+        scatterChartView.yAxisMaxValue = 1000
+        lineChartView.yAxisMinValue = 0
+        lineChartView.yAxisMaxValue = 1000
+        barChartView.yAxisMaxValue = 1000
+        prepareDataList()
     }
 
     @IBAction private func tappedReloadButton(_ sender: Any) {
@@ -71,7 +77,7 @@ class ViewController: UIViewController {
     
     private func prepareDataList() {
         radarRowNum = Int.random(in: 3...titles.count)
-        let radarSectionNum = Int.random(in: 1...7)
+        let radarSectionNum = Int.random(in: 1...10)
         radarDataList.removeAll()
         for _ in 0..<radarSectionNum {
             var values = [CGFloat]()
@@ -81,45 +87,45 @@ class ViewController: UIViewController {
             radarDataList.append(values)
         }
         
-        let lineSectionNum = Int.random(in: 1...11)
-        lineRowNum = Int.random(in: 1...16)
+        let lineSectionNum = Int.random(in: 1...10)
+        lineRowNum = Int.random(in: 1...10)
         lineDataList.removeAll()
         for _ in 0..<lineSectionNum {
             var values = [CGFloat]()
             for _ in 0..<lineRowNum {
-                values.append(CGFloat.random(in: 0...1000))
+                values.append(CGFloat.random(in: lineChartView.yAxisMinValue...lineChartView.yAxisMaxValue))
             }
             lineDataList.append(values)
         }
-        
-        let pieSectionNum = Int.random(in: 1...11)
+
+        let pieSectionNum = Int.random(in: 1...10)
         pieDataList.removeAll()
         for _ in 0..<pieSectionNum {
             pieDataList.append(CGFloat.random(in: 0...1000))
         }
         
-        let barSectionNum = Int.random(in: 1...11)
+        let barSectionNum = Int.random(in: 1...10)
         let barRowNum = Int.random(in: 1...6)
         barDataList.removeAll()
         barColors.removeAll()
-        for (i) in 0..<barSectionNum {
+        for i in 0..<barSectionNum {
             var values = [CGFloat]()
             for _ in 0..<barRowNum {
                 if i == 0 {
                     barColors.append(randomColor(alpha: 1.0))
                 }
-                values.append(CGFloat.random(in: 0...200))
+                values.append(CGFloat.random(in: 0...barChartView.yAxisMaxValue/CGFloat(barRowNum)))
             }
             barDataList.append(values)
         }
-        
-        let scatterSectionNum = Int.random(in: 1...11)
+        let scatterSectionNum = Int.random(in: 1...10)
         scatterDataList.removeAll()
         for _ in 0..<scatterSectionNum {
             var values = [AMScatterValue]()
-            let scatterRowNum = Int.random(in: 1...100)
+            let scatterRowNum = Int.random(in: 1...15)
             for _ in 0..<scatterRowNum {
-                values.append(.init(x: CGFloat.random(in: 0...1000), y: CGFloat.random(in: 0...1000)))
+                values.append(.init(x: CGFloat.random(in: scatterChartView.xAxisMinValue...scatterChartView.xAxisMaxValue),
+                                    y: CGFloat.random(in: scatterChartView.yAxisMinValue...scatterChartView.yAxisMaxValue)))
             }
             scatterDataList.append(values)
         }
@@ -127,23 +133,23 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: AMRadarChartViewDataSource {
-    func numberOfSections(in radarChartView:AMRadarChartView) -> Int {
+    func numberOfSections(in radarChartView: AMRadarChartView) -> Int {
         return radarDataList.count
     }
     
-    func numberOfRows(in radarChartView:AMRadarChartView) -> Int {
+    func numberOfRows(in radarChartView: AMRadarChartView) -> Int {
         return radarRowNum
     }
     
-    func radarChartView(_ radarChartView:AMRadarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
+    func radarChartView(_ radarChartView: AMRadarChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
         return radarDataList[indexPath.section][indexPath.row]
     }
     
-    func radarChartView(_ radarChartView:AMRadarChartView, fillColorForSection section: Int) -> UIColor {
+    func radarChartView(_ radarChartView: AMRadarChartView, fillColorForSection section: Int) -> UIColor {
         return randomColor(alpha: 0.5)
     }
     
-    func radarChartView(_ radarChartView:AMRadarChartView, strokeColorForSection section: Int) -> UIColor {
+    func radarChartView(_ radarChartView: AMRadarChartView, strokeColorForSection section: Int) -> UIColor {
         return randomColor(alpha: 0.5)
     }
     
@@ -153,23 +159,23 @@ extension ViewController: AMRadarChartViewDataSource {
 }
 
 extension ViewController: AMScatterChartViewDataSource {
-    func numberOfSections(in scatterChartView:AMScatterChartView) -> Int {
+    func numberOfSections(in scatterChartView: AMScatterChartView) -> Int {
         return scatterDataList.count
     }
     
-    func scatterChartView(_ scatterChartView:AMScatterChartView, numberOfRowsInSection section: Int) -> Int {
+    func scatterChartView(_ scatterChartView: AMScatterChartView, numberOfRowsInSection section: Int) -> Int {
         return scatterDataList[section].count
     }
     
-    func scatterChartView(_ scatterChartView:AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMScatterValue {
+    func scatterChartView(_ scatterChartView: AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMScatterValue {
         return scatterDataList[indexPath.section][indexPath.row]
     }
     
-    func scatterChartView(_ scatterChartView:AMScatterChartView, colorForSection section: Int) -> UIColor {
+    func scatterChartView(_ scatterChartView: AMScatterChartView, colorForSection section: Int) -> UIColor {
         return randomColor(alpha: 1.0)
     }
     
-    func scatterChartView(_ scatterChartView:AMScatterChartView, pointTypeForSection section: Int) -> AMPointType {
+    func scatterChartView(_ scatterChartView: AMScatterChartView, pointTypeForSection section: Int) -> AMPointType {
         return randomPointType()
     }
 }
@@ -179,37 +185,37 @@ extension ViewController: AMPieChartViewDataSource {
         return pieDataList.count
     }
     
-    func pieChartView(_ pieChartView:AMPieChartView, valueForSection section: Int) -> CGFloat {
+    func pieChartView(_ pieChartView: AMPieChartView, valueForSection section: Int) -> CGFloat {
         return pieDataList[section]
     }
     
-    func pieChartView(_ pieChartView:AMPieChartView, colorForSection section: Int) -> UIColor {
+    func pieChartView(_ pieChartView: AMPieChartView, colorForSection section: Int) -> UIColor {
         return randomColor(alpha: 1.0)
     }
 }
 
 extension ViewController: AMLineChartViewDataSource {
-    func numberOfSections(in lineChartView:AMLineChartView) -> Int {
+    func numberOfSections(in lineChartView: AMLineChartView) -> Int {
         return lineDataList.count
     }
     
-    func numberOfRows(in lineChartView:AMLineChartView) -> Int {
-        return lineRowNum
+    func numberOfRows(in lineChartView: AMLineChartView) -> Int {
+        return lineDataList.first!.count
     }
     
-    func lineChartView(_ lineChartView:AMLineChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
+    func lineChartView(_ lineChartView: AMLineChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat {
         return lineDataList[indexPath.section][indexPath.row]
     }
     
-    func lineChartView(_ lineChartView:AMLineChartView, colorForSection section: Int) -> UIColor {
+    func lineChartView(_ lineChartView: AMLineChartView, colorForSection section: Int) -> UIColor {
         return randomColor(alpha: 1.0)
     }
     
-    func lineChartView(_ lineChartView:AMLineChartView, titleForXlabelInRow row: Int) -> String {
+    func lineChartView(_ lineChartView: AMLineChartView, titleForXlabelInRow row: Int) -> String {
         return titles[row]
     }
     
-    func lineChartView(_ lineChartView:AMLineChartView, pointTypeForSection section: Int) -> AMPointType {
+    func lineChartView(_ lineChartView: AMLineChartView, pointTypeForSection section: Int) -> AMPointType {
         return randomPointType()
     }
 }

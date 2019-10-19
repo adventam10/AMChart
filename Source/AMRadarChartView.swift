@@ -129,9 +129,10 @@ public class AMRadarChartView: AMChartView {
         var drawRadius = radius
         let margin: CGFloat = 8
         let maxWidth = labels.sorted { $0.frame.width > $1.frame.width }.first!.frame.width
+        let center = CGPoint(x: chartView.frame.size.width/2, y: chartView.frame.size.height/2)
         labels.forEach {
-            $0.center = CGPoint(x: chartCenter.x - maxWidth/2 - margin + drawRadius * CGFloat(cosf(angle)),
-                                y: chartCenter.y + margin + drawRadius * CGFloat(sinf(angle)))
+            $0.center = CGPoint(x: center.x - maxWidth/2 - margin + drawRadius * CGFloat(cosf(angle)),
+                                y: center.y + margin + drawRadius * CGFloat(sinf(angle)))
             drawRadius -= radius / CGFloat(numberOfAxisLabels - 1)
         }
     }

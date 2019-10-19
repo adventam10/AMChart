@@ -8,16 +8,11 @@
 
 ## Demo
 
-![chart](https://user-images.githubusercontent.com/34936885/34915170-9a4af420-f964-11e7-93ce-662fcae905e2.gif)
-
-![chart2](https://user-images.githubusercontent.com/34936885/34915175-ab7988ce-f964-11e7-90a8-ad07986e8eee.gif)
-
-## Variety
-
-<img width="623" alt="chart" src="https://user-images.githubusercontent.com/34936885/34915180-bb3752fa-f964-11e7-99a4-87706a4a4932.png">
+![charts](https://user-images.githubusercontent.com/34936885/67146899-d0171500-f2ca-11e9-8266-31e1984e66e4.gif)
 
 ## Usage
 ### AMBarChartView
+![bar](https://user-images.githubusercontent.com/34936885/67146915-f63cb500-f2ca-11e9-9073-5eb8f3314360.png)
 
 ```swift
 let barChartView = AMBarChartView(frame: view.bounds)
@@ -43,17 +38,12 @@ func barChartView(_ barChartView: AMBarChartView, titleForXlabelInSection sectio
 
 ```swift
 @IBInspectable public var yAxisMaxValue: CGFloat = 1000
-@IBInspectable public var yAxisMinValue: CGFloat = 0
 @IBInspectable public var numberOfYAxisLabel: Int = 6
-@IBInspectable public var yLabelWidth: CGFloat = 50.0
-@IBInspectable public var xLabelHeight: CGFloat = 30.0
 @IBInspectable public var axisColor: UIColor = .black
 @IBInspectable public var axisWidth: CGFloat = 1.0
-@IBInspectable public var barSpace: CGFloat = 10
+@IBInspectable public var barSpace: CGFloat = 8
 @IBInspectable public var yAxisTitleFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var xAxisTitleFont: UIFont = .systemFont(ofSize: 15)
-@IBInspectable public var xAxisTitleLabelHeight: CGFloat = 50.0
-@IBInspectable public var yAxisTitleLabelHeight: CGFloat = 50.0
 @IBInspectable public var yLabelsFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var xLabelsFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var yAxisTitleColor: UIColor = .black
@@ -63,11 +53,12 @@ func barChartView(_ barChartView: AMBarChartView, titleForXlabelInSection sectio
 @IBInspectable public var isHorizontalLine: Bool = false
 @IBInspectable public var yAxisTitle: String = ""
 @IBInspectable public var xAxisTitle: String = ""
-public var yAxisDecimalFormat: AMBCDecimalFormat = .none
+public var yAxisDecimalFormat: AMDecimalFormat = .none
 public var animationDuration: CFTimeInterval = 0.6
 ```
 
 ### AMLineChartView
+![line](https://user-images.githubusercontent.com/34936885/67146924-14a2b080-f2cb-11e9-9720-4290ac1b9832.png)
 
 ```swift
 let lineChartView = AMLineChartView(frame: view.bounds)
@@ -86,7 +77,7 @@ func numberOfRows(in lineChartView: AMLineChartView) -> Int
 func lineChartView(_ lineChartView: AMLineChartView, valueForRowAtIndexPath indexPath: IndexPath) -> CGFloat
 func lineChartView(_ lineChartView: AMLineChartView, colorForSection section: Int) -> UIColor
 func lineChartView(_ lineChartView: AMLineChartView, titleForXlabelInRow row: Int) -> String
-func lineChartView(_ lineChartView: AMLineChartView, pointTypeForSection section: Int) -> AMLCPointType
+func lineChartView(_ lineChartView: AMLineChartView, pointTypeForSection section: Int) -> AMPointType
 ```
 
 #### Customization
@@ -96,14 +87,10 @@ func lineChartView(_ lineChartView: AMLineChartView, pointTypeForSection section
 @IBInspectable public var yAxisMaxValue: CGFloat = 1000
 @IBInspectable public var yAxisMinValue: CGFloat = 0
 @IBInspectable public var numberOfYAxisLabel: Int = 6
-@IBInspectable public var yLabelWidth: CGFloat = 50.0
-@IBInspectable public var xLabelHeight: CGFloat = 30.0
 @IBInspectable public var axisColor: UIColor = .black
 @IBInspectable public var axisWidth: CGFloat = 1.0
 @IBInspectable public var yAxisTitleFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var xAxisTitleFont: UIFont = .systemFont(ofSize: 15)
-@IBInspectable public var xAxisTitleLabelHeight: CGFloat = 50.0
-@IBInspectable public var yAxisTitleLabelHeight: CGFloat = 50.0
 @IBInspectable public var yLabelsFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var xLabelsFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var yAxisTitleColor: UIColor = .black
@@ -113,11 +100,12 @@ func lineChartView(_ lineChartView: AMLineChartView, pointTypeForSection section
 @IBInspectable public var isHorizontalLine: Bool = false
 @IBInspectable public var yAxisTitle: String = ""
 @IBInspectable public var xAxisTitle: String = ""
-public var yAxisDecimalFormat: AMLCDecimalFormat = .none
+public var yAxisDecimalFormat: AMDecimalFormat = .none
 public var animationDuration: CFTimeInterval = 0.6
 ```
 
 ### AMPieChartView
+![pie](https://user-images.githubusercontent.com/34936885/67146931-23896300-f2cb-11e9-8dbf-84743a54f314.png)
 
 ```swift
 let pieChartView = AMPieChartView(frame: view.bounds)
@@ -155,12 +143,13 @@ func pieChartView(_ pieChartView: AMPieChartView, didDeSelectSection section: In
 @IBInspectable public var centerLabelFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var centerLabelTextColor: UIColor = .black
 @IBInspectable public var centerLabelText: String = ""
-public var animationDuration: CFTimeInterval = 0.6
+public var animationDuration: CFTimeInterval = 0.4
 public var selectedAnimationDuration: CFTimeInterval = 0.3
 public var centerLabelAttribetedText: NSAttributedString? = nil
 ```
 
 ### AMRadarChartView
+![radar](https://user-images.githubusercontent.com/34936885/67146968-78c57480-f2cb-11e9-896f-4de1b13f0b82.png)
 
 ```swift
 let radarChartView = AMRadarChartView(frame: view.bounds)
@@ -182,7 +171,9 @@ func radarChartView(_ radarChartView: AMRadarChartView, fillColorForSection sect
 func radarChartView(_ radarChartView: AMRadarChartView, strokeColorForSection section: Int) -> UIColor
 
 /// Optional
-func radarChartView(_ radarChartView: AMRadarChartView, titleForXlabelInRow row: Int) -> String
+func radarChartView(_ radarChartView: AMRadarChartView, titleForVertexInRow row: Int) -> String
+func radarChartView(_ radarChartView: AMRadarChartView, fontForVertexInRow row: Int) -> UIFont // default is System 15.0
+func radarChartView(_ radarChartView: AMRadarChartView, textColorForVertexInRow row: Int) -> UIColor // default is black
 ```
 
 #### Customization
@@ -191,22 +182,18 @@ func radarChartView(_ radarChartView: AMRadarChartView, titleForXlabelInRow row:
 ```swift
 @IBInspectable public var axisMaxValue: CGFloat = 5.0
 @IBInspectable public var axisMinValue: CGFloat = 0.0
-@IBInspectable public var numberOfAxisLabel: Int = 6
-@IBInspectable public var rowLabelWidth: CGFloat = 50.0
-@IBInspectable public var rowLabelHeight: CGFloat = 30.0
+@IBInspectable public var numberOfAxisLabels: Int = 6
 @IBInspectable public var axisColor: UIColor = .black
 @IBInspectable public var axisWidth: CGFloat = 1.0
-@IBInspectable public var axisLabelsFont: UIFont = .systemFont(ofSize: 12)
-@IBInspectable public var axisLabelsWidth: CGFloat = 50.0
-@IBInspectable public var rowLabelsFont: UIFont = .systemFont(ofSize: 15)
+@IBInspectable public var axisLabelsFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var axisLabelsTextColor: UIColor = .black
-@IBInspectable public var rowLabelsTextColor: UIColor = .black
 @IBInspectable public var isDottedLine: Bool = false
-public var axisDecimalFormat: AMRCDecimalFormat = .none
+public var axisDecimalFormat: AMDecimalFormat = .none
 public var animationDuration: CFTimeInterval = 0.6
 ```
 
 ### AMScatterChartView
+![scatter](https://user-images.githubusercontent.com/34936885/67146918-fccb2c80-f2ca-11e9-8348-ee00d5febf12.png)
 
 ```swift
 let scatterChartView = AMScatterChartView(frame: view.bounds)
@@ -222,9 +209,9 @@ Conform to the protocol in the class implementation.
 ```swift
 func numberOfSections(in scatterChartView: AMScatterChartView) -> Int
 func scatterChartView(_ scatterChartView: AMScatterChartView, numberOfRowsInSection section: Int) -> Int
-func scatterChartView(_ scatterChartView: AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMSCScatterValue
+func scatterChartView(_ scatterChartView: AMScatterChartView, valueForRowAtIndexPath indexPath: IndexPath) -> AMScatterValue
 func scatterChartView(_ scatterChartView: AMScatterChartView, colorForSection section: Int) -> UIColor
-func scatterChartView(_ scatterChartView: AMScatterChartView, pointTypeForSection section: Int) -> AMSCPointType
+func scatterChartView(_ scatterChartView: AMScatterChartView, pointTypeForSection section: Int) -> AMPointType
 ```
 
 #### Customization
@@ -237,24 +224,21 @@ func scatterChartView(_ scatterChartView: AMScatterChartView, pointTypeForSectio
 @IBInspectable public var xAxisMaxValue: CGFloat = 1000
 @IBInspectable public var xAxisMinValue: CGFloat = 0
 @IBInspectable public var numberOfXAxisLabel: Int = 6
-@IBInspectable public var yLabelWidth: CGFloat = 50.0
-@IBInspectable public var xLabelHeight: CGFloat = 30.0
 @IBInspectable public var axisColor: UIColor = .black
 @IBInspectable public var axisWidth: CGFloat = 1.0
 @IBInspectable public var yAxisTitleFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var xAxisTitleFont: UIFont = .systemFont(ofSize: 15)
-@IBInspectable public var xAxisTitleLabelHeight: CGFloat = 50.0
-@IBInspectable public var yAxisTitleLabelHeight: CGFloat = 50.0
 @IBInspectable public var yLabelsFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var xLabelsFont: UIFont = .systemFont(ofSize: 15)
 @IBInspectable public var yAxisTitleColor: UIColor = .black
 @IBInspectable public var xAxisTitleColor: UIColor = .black
 @IBInspectable public var yLabelsTextColor: UIColor = .black
 @IBInspectable public var xLabelsTextColor: UIColor = .black
+@IBInspectable public var isHorizontalLine: Bool = false
 @IBInspectable public var yAxisTitle: String = ""
-@IBInspectable public var xAxisTitle: String = ""    
-public var yAxisDecimalFormat: AMSCDecimalFormat = .none
-public var xAxisDecimalFormat: AMSCDecimalFormat = .none
+@IBInspectable public var xAxisTitle: String = ""
+public var yAxisDecimalFormat: AMDecimalFormat = .none
+public var xAxisDecimalFormat: AMDecimalFormat = .none
 public var animationDuration: CFTimeInterval = 0.6
 ```
 

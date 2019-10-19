@@ -276,7 +276,7 @@ public class AMRadarChartView: AMChartView {
         precondition(numberOfAxisLabels > 1, "numberOfAxisLabel is less than 2")
         precondition(sections > 0, "numberOfSections is less than 1")
         precondition(rows > 2, "numberOfRows is less than 3")
-        
+        precondition(axisMinValue < axisMaxValue, "axisMaxValue is less than or eqaul to axisMinValue")
         angleList = makeAngleList(rows: rows)
         prepareRowLabels()
         prepareAxisLabels()

@@ -19,7 +19,6 @@ public protocol AMBarChartViewDataSource: AnyObject {
 public class AMBarChartView: AMChartView {
     
     @IBInspectable public var yAxisMaxValue: CGFloat = 1000
-    @IBInspectable public var yAxisMinValue: CGFloat = 0
     @IBInspectable public var numberOfYAxisLabel: Int = 6
     @IBInspectable public var axisColor: UIColor = .black
     @IBInspectable public var axisWidth: CGFloat = 1.0
@@ -40,6 +39,7 @@ public class AMBarChartView: AMChartView {
     public var yAxisDecimalFormat: AMDecimalFormat = .none
     public var animationDuration: CFTimeInterval = 0.6
         
+    private let yAxisMinValue: CGFloat = 0
     private let margin: CGFloat = 8
     private let xAxisView = UIView()
     private let yAxisView = UIView()
@@ -254,6 +254,7 @@ public class AMBarChartView: AMChartView {
         let sections = dataSource.numberOfSections(in: self)
         precondition(numberOfYAxisLabel > 1, "numberOfYAxisLabel is less than 2")
         precondition(sections > 0, "sections is less than 1")
+        precondition(yAxisMaxValue >= 0, "yAxisMaxValue is less than 0")
         yLabels = makeYAxisLabels()
         xLabels = makeXAxisLabels(sections: sections)
         prepareXAxisTitleLabel()
@@ -273,7 +274,9 @@ public class AMBarChartView: AMChartView {
             var colors = [UIColor]()
             for row in 0..<rows {
                 let indexPath = IndexPath(row:row, section: section)
-                values.append(dataSource.barChartView(self, valueForRowAtIndexPath: indexPath))
+                let value = dataSource.barChartView(self, valueForRowAtIndexPath: indexPath)
+                precondition(value >= 0, "value is less than 0 \(indexPath)")
+                values.append(value)
                 colors.append(dataSource.barChartView(self, colorForRowAtIndexPath: indexPath))
             }
             prepareBarGraph(section: section, colors: colors, values: values)

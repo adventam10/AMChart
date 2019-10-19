@@ -312,6 +312,7 @@ public class AMLineChartView: AMChartView {
         let rows = dataSource.numberOfRows(in: self)
         precondition(numberOfYAxisLabel > 1, "numberOfYAxisLabel is less than 2")
         precondition(rows > 0, "rows is less than 1")
+        precondition(yAxisMinValue < yAxisMaxValue, "yAxisMaxValue is less than or eqaul to yAxisMinValue")
         yLabels = makeYAxisLabels()
         xLabels = makeXAxisLabels(rows: rows)
         prepareXAxisTitleLabel()

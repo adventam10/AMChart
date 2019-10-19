@@ -307,6 +307,8 @@ public class AMScatterChartView: AMChartView {
         let sections = dataSource.numberOfSections(in: self)
         precondition(numberOfYAxisLabel > 1, "numberOfYAxisLabel is less than 2")
         precondition(numberOfXAxisLabel > 1, "numberOfXAxisLabel is less than 2")
+        precondition(xAxisMinValue < xAxisMaxValue, "xAxisMaxValue is less than or eqaul to xAxisMinValue")
+        precondition(yAxisMinValue < yAxisMaxValue, "yAxisMaxValue is less than or eqaul to yAxisMinValue")
         yLabels = makeYAxisLabels()
         xLabels = makeXAxisLabels()
         prepareXAxisTitleLabel()

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name         = "AMChart"
-    s.version      = "2.2.0"
+    s.version      = "2.3.1"
     s.summary      = "It can display chart."
     s.license      = { :type => 'MIT', :file => 'LICENSE' }
     s.homepage     = "https://github.com/adventam10/AMChart"

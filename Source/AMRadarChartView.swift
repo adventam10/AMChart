@@ -103,10 +103,11 @@ public class AMRadarChartView: AMChartView {
         let maxHeight = labels.sorted { $0.frame.height > $1.frame.height }.first!.frame.height
         maxVertexLabelLength = maxWidth < maxHeight ? maxHeight + margin : maxWidth + margin
         let smallRadius = radius + maxVertexLabelLength/2
+        let center = CGPoint(x: chartView.frame.size.width/2, y: chartView.frame.size.height/2)
         for (index, angle) in angleList.enumerated() {
             let label = labels[index]
-            label.center = CGPoint(x: chartCenter.x + smallRadius * CGFloat(cosf(angle)),
-                                   y: chartCenter.y + smallRadius * CGFloat(sinf(angle)))
+            label.center = CGPoint(x: center.x + smallRadius * CGFloat(cosf(angle)),
+                                   y: center.y + smallRadius * CGFloat(sinf(angle)))
         }
     }
     

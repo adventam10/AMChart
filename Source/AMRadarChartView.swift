@@ -21,7 +21,7 @@ public protocol AMRadarChartViewDataSource: AnyObject {
     func radarChartView(_ radarChartView: AMRadarChartView, textColorForVertexInRow row: Int) -> UIColor
 }
 
-extension AMRadarChartViewDataSource {
+public extension AMRadarChartViewDataSource {
     func radarChartView(_ radarChartView: AMRadarChartView, titleForVertexInRow row: Int) -> String {
         return ""
     }

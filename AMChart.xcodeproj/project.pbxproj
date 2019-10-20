@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0E3ADB75235C1BCE008F5FCD /* AMChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E3ADB73235C1BCD008F5FCD /* AMChartView.swift */; };
+		0E3ADB76235C1BCE008F5FCD /* AMChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E3ADB74235C1BCE008F5FCD /* AMChartData.swift */; };
 		0E407B10235483F30096FA4A /* AMLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E407B0B235483F30096FA4A /* AMLineChartView.swift */; };
 		0E407B11235483F30096FA4A /* AMPieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E407B0C235483F30096FA4A /* AMPieChartView.swift */; };
 		0E407B12235483F30096FA4A /* AMScatterChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E407B0D235483F30096FA4A /* AMScatterChartView.swift */; };
@@ -16,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0E3ADB73235C1BCD008F5FCD /* AMChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMChartView.swift; sourceTree = "<group>"; };
+		0E3ADB74235C1BCE008F5FCD /* AMChartData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMChartData.swift; sourceTree = "<group>"; };
 		0E407B0B235483F30096FA4A /* AMLineChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMLineChartView.swift; sourceTree = "<group>"; };
 		0E407B0C235483F30096FA4A /* AMPieChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMPieChartView.swift; sourceTree = "<group>"; };
 		0E407B0D235483F30096FA4A /* AMScatterChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AMScatterChartView.swift; sourceTree = "<group>"; };
@@ -40,6 +44,8 @@
 		0E407B0A235483F30096FA4A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				0E3ADB74235C1BCE008F5FCD /* AMChartData.swift */,
+				0E3ADB73235C1BCD008F5FCD /* AMChartView.swift */,
 				0E407B0B235483F30096FA4A /* AMLineChartView.swift */,
 				0E407B0C235483F30096FA4A /* AMPieChartView.swift */,
 				0E407B0D235483F30096FA4A /* AMScatterChartView.swift */,
@@ -156,10 +162,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				0E407B14235483F30096FA4A /* AMRadarChartView.swift in Sources */,
+				0E3ADB75235C1BCE008F5FCD /* AMChartView.swift in Sources */,
 				0E407B12235483F30096FA4A /* AMScatterChartView.swift in Sources */,
 				0E407B11235483F30096FA4A /* AMPieChartView.swift in Sources */,
 				0E407B10235483F30096FA4A /* AMLineChartView.swift in Sources */,
 				0E407B13235483F30096FA4A /* AMBarChartView.swift in Sources */,
+				0E3ADB76235C1BCE008F5FCD /* AMChartData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -145,7 +145,7 @@ func pieChartView(_ pieChartView: AMPieChartView, didDeSelectSection section: In
 @IBInspectable public var centerLabelText: String = ""
 public var animationDuration: CFTimeInterval = 0.4
 public var selectedAnimationDuration: CFTimeInterval = 0.3
-public var centerLabelAttribetedText: NSAttributedString? = nil
+public var centerLabelAttributedText: NSAttributedString? = nil
 ```
 
 ### AMRadarChartView

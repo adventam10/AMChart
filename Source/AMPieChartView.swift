@@ -102,9 +102,9 @@ public class AMPieChartView: AMChartView {
     weak public var delegate: AMPieChartViewDelegate?
     public var animationDuration: CFTimeInterval = 0.4
     public var selectedAnimationDuration: CFTimeInterval = 0.3
-    public var centerLabelAttribetedText: NSAttributedString? = nil {
+    public var centerLabelAttributedText: NSAttributedString? = nil {
         didSet {
-            centerLabel.attributedText = centerLabelAttribetedText
+            centerLabel.attributedText = centerLabelAttributedText
         }
     }
     
@@ -365,3 +365,4 @@ public class AMPieChartView: AMChartView {
         reloadData()
     }
 }
+
